@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility } from '@/lib/numerology';
-import { getPersonas, addPersona, deletePersona } from '@/lib/supabase';
+import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export } from '@/lib/numerology';
+import { getPersonas, addPersona, updatePersona, deletePersona } from '@/lib/supabase';
 
 const CATEGORIES = [
   { value: 'familia', label: '👨‍👩‍👧 Familia', color: '#c62828' },
@@ -11,8 +11,7 @@ const CATEGORIES = [
 ];
 
 function PersonCard({ persona, onClick }) {
-  const year = new Date(persona.fecha_nacimiento).getFullYear();
-  const zodiac = getChineseZodiac(year);
+  const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
   const meaning = getLifeNumberMeaning(lifeNum);
   const cat = CATEGORIES.find(c => c.value === persona.categoria) || CATEGORIES[0];
@@ -82,13 +81,37 @@ function AddPersonForm({ onSave, onCancel, initial }) {
   );
 }
 
-function PersonProfile({ persona, onBack, onCompare, onDelete }) {
-  const year = new Date(persona.fecha_nacimiento).getFullYear();
-  const zodiac = getChineseZodiac(year);
-  const element = getChineseElement(year);
+function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-[#faf5eb] w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl p-6">
+        <h2 className="text-lg font-bold text-[#2d1f0e] mb-4">Cambiar categoría</h2>
+        <div className="space-y-2">
+          {CATEGORIES.map(c => (
+            <button key={c.value} onClick={() => onChangeCat(c.value)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${c.value === currentCat ? 'ring-2 ring-offset-1 opacity-100' : 'opacity-70 hover:opacity-100'}`}
+              style={{ background: c.color + '15', color: c.color, ringColor: c.color }}>
+              <span className="text-lg">{c.label.split(' ')[0]}</span>
+              <span className="font-medium">{c.label.split(' ').slice(1).join(' ')}</span>
+              {c.value === currentCat && <span className="ml-auto text-sm">actual</span>}
+            </button>
+          ))}
+        </div>
+        <button onClick={onCancel} className="w-full mt-4 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63]">Cancelar</button>
+      </div>
+    </div>
+  );
+}
+
+function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory }) {
+  const zodiac = getChineseZodiac(persona.fecha_nacimiento);
+  const element = getChineseElement(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
   const meaning = getLifeNumberMeaning(lifeNum);
+  const chineseYear = getChineseYear_export(persona.fecha_nacimiento);
   const birthDate = new Date(persona.fecha_nacimiento + 'T12:00:00');
+  const gregorianYear = birthDate.getFullYear();
+  const cat = CATEGORIES.find(c => c.value === persona.categoria) || CATEGORIES[0];
 
   return (
     <div className="min-h-screen bg-[#faf5eb]">
@@ -104,6 +127,10 @@ function PersonProfile({ persona, onBack, onCompare, onDelete }) {
           </div>
           <h1 className="text-2xl font-bold">{persona.nombre}</h1>
           <p className="text-white/70 mt-1">{birthDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <button onClick={onChangeCategory}
+            className="mt-2 inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-all">
+            {cat.label} <span className="opacity-60">✎</span>
+          </button>
         </div>
       </div>
 
@@ -128,6 +155,9 @@ function PersonProfile({ persona, onBack, onCompare, onDelete }) {
             <div>
               <h3 className="font-bold text-[#2d1f0e]">{zodiac.name}</h3>
               <p className="text-sm text-[#8d6e63] mt-1">{zodiac.traits}</p>
+              {chineseYear !== gregorianYear && (
+                <p className="text-xs text-[#d4a843] mt-1">⚡ Año chino: {chineseYear} (nació antes del Año Nuevo Lunar)</p>
+              )}
             </div>
           </div>
         </div>
@@ -155,10 +185,10 @@ function PersonProfile({ persona, onBack, onCompare, onDelete }) {
 
 function CompareView({ person1, person2, onBack }) {
   const compat = calcCompatibility(person1, person2);
-  const year1 = new Date(person1.fecha_nacimiento).getFullYear();
-  const year2 = new Date(person2.fecha_nacimiento).getFullYear();
-  const z1 = getChineseZodiac(year1), z2 = getChineseZodiac(year2);
-  const n1 = calcLifeNumber(person1.fecha_nacimiento), n2 = calcLifeNumber(person2.fecha_nacimiento);
+  const z1 = getChineseZodiac(person1.fecha_nacimiento);
+  const z2 = getChineseZodiac(person2.fecha_nacimiento);
+  const n1 = calcLifeNumber(person1.fecha_nacimiento);
+  const n2 = calcLifeNumber(person2.fecha_nacimiento);
 
   const ScoreBar = ({ label, score }) => (
     <div>
@@ -233,8 +263,7 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
         ) : (
           <div className="space-y-2">
             {others.map(p => {
-              const yr = new Date(p.fecha_nacimiento).getFullYear();
-              const z = getChineseZodiac(yr);
+              const z = getChineseZodiac(p.fecha_nacimiento);
               return (
                 <button key={p.id} onClick={() => onSelect(p)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white transition-all">
                   <span className="text-2xl">{z.emoji}</span>
@@ -252,11 +281,12 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
 
 export default function Home() {
   const [personas, setPersonas] = useState([]);
-  const [view, setView] = useState('list'); // list, profile, compare
+  const [view, setView] = useState('list');
   const [showAdd, setShowAdd] = useState(false);
   const [selected, setSelected] = useState(null);
   const [comparePair, setComparePair] = useState(null);
   const [showCompareSelect, setShowCompareSelect] = useState(false);
+  const [showCategoryChanger, setShowCategoryChanger] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('all');
@@ -264,11 +294,9 @@ export default function Home() {
 
   useEffect(() => {
     getPersonas().then(p => { setPersonas(p); setLoading(false); });
-    
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
-    
     const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
@@ -288,6 +316,17 @@ export default function Home() {
     setSelected(null);
   };
 
+  const handleChangeCategory = async (newCat) => {
+    if (!selected) return;
+    const updated = await updatePersona(selected.id, { categoria: newCat });
+    if (updated) {
+      const updatedPerson = { ...selected, categoria: newCat };
+      setPersonas(prev => prev.map(p => p.id === selected.id ? updatedPerson : p));
+      setSelected(updatedPerson);
+    }
+    setShowCategoryChanger(false);
+  };
+
   const handleInstall = async () => {
     if (installPrompt) { installPrompt.prompt(); setInstallPrompt(null); }
   };
@@ -304,11 +343,17 @@ export default function Home() {
         <PersonProfile persona={selected}
           onBack={() => { setView('list'); setSelected(null); }}
           onCompare={() => setShowCompareSelect(true)}
-          onDelete={() => handleDelete(selected.id)} />
+          onDelete={() => handleDelete(selected.id)}
+          onChangeCategory={() => setShowCategoryChanger(true)} />
         {showCompareSelect && (
           <CompareSelector personas={personas} current={selected}
             onSelect={(p2) => { setComparePair([selected, p2]); setShowCompareSelect(false); setView('compare'); }}
             onCancel={() => setShowCompareSelect(false)} />
+        )}
+        {showCategoryChanger && (
+          <CategoryChanger currentCat={selected.categoria}
+            onChangeCat={handleChangeCategory}
+            onCancel={() => setShowCategoryChanger(false)} />
         )}
       </>
     );
@@ -321,7 +366,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#faf5eb] pb-24">
-      {/* Header */}
       <div className="gradient-mystic text-white p-6 pb-8 rounded-b-3xl">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -341,7 +385,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Category filters */}
       <div className="px-4 mt-4 flex gap-2 overflow-x-auto pb-2">
         <button onClick={() => setFilterCat('all')}
           className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${filterCat === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
@@ -353,13 +396,12 @@ export default function Home() {
             <button key={c.value} onClick={() => setFilterCat(c.value)}
               className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${filterCat === c.value ? 'text-white' : 'bg-white border border-[#f0e6d3]'}`}
               style={filterCat === c.value ? { background: c.color } : { color: c.color }}>
-              {c.label.split(' ')[0]} {c.label.split(' ')[1]} ({count})
+              {c.label.split(' ')[0]} {c.label.split(' ').slice(1).join(' ')} ({count})
             </button>
           );
         })}
       </div>
 
-      {/* Person list */}
       <div className="px-4 mt-4 space-y-3">
         {loading ? (
           <div className="text-center py-16 text-[#8d6e63]">Cargando...</div>
@@ -375,18 +417,15 @@ export default function Home() {
         )}
       </div>
 
-      {/* FAB */}
       <button onClick={() => setShowAdd(true)}
         className="fixed bottom-6 right-6 w-14 h-14 rounded-full gradient-mystic text-white text-2xl shadow-lg hover:opacity-90 active:scale-95 transition-all z-40">
         +
       </button>
 
-      {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 text-center py-2 text-xs text-[#c4a882] bg-[#faf5eb]/80 backdrop-blur">
         Hecho por duendes.app 2026
       </div>
 
-      {/* Add modal */}
       {showAdd && <AddPersonForm onSave={handleAdd} onCancel={() => setShowAdd(false)} />}
     </div>
   );
