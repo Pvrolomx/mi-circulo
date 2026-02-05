@@ -15,6 +15,8 @@ function PersonCard({ persona, onClick }) {
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
   const meaning = getLifeNumberMeaning(lifeNum);
   const cat = CATEGORIES.find(c => c.value === persona.categoria) || CATEGORIES[0];
+  const birthDate = new Date(persona.fecha_nacimiento + 'T12:00:00');
+  const birthStr = birthDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
 
   return (
     <button onClick={onClick} className="w-full text-left bg-white rounded-2xl p-4 card-glow hover:shadow-lg transition-all border border-[#f0e6d3] active:scale-[0.98]">
@@ -23,10 +25,14 @@ function PersonCard({ persona, onClick }) {
           {zodiac.emoji}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-[#2d1f0e] truncate">{persona.nombre}</h3>
+          <div className="flex items-baseline gap-2">
+            <h3 className="font-semibold text-[#2d1f0e] truncate">{persona.nombre}</h3>
+            <span className="text-xs text-[#c4a882] shrink-0">{birthStr}</span>
+          </div>
           <p className="text-sm text-[#8d6e63]">{zodiac.name} · Nº {lifeNum} {meaning.title}</p>
+          {persona.nota && <p className="text-xs text-[#c4a882] mt-0.5 truncate italic">"{persona.nota}"</p>}
         </div>
-        <span className="text-xs px-2 py-1 rounded-full" style={{ background: cat.color + '18', color: cat.color }}>
+        <span className="text-xs px-2 py-1 rounded-full shrink-0" style={{ background: cat.color + '18', color: cat.color }}>
           {cat.label.split(' ')[0]}
         </span>
       </div>
@@ -38,6 +44,7 @@ function AddPersonForm({ onSave, onCancel, initial }) {
   const [nombre, setNombre] = useState(initial?.nombre || '');
   const [fecha, setFecha] = useState(initial?.fecha_nacimiento || '');
   const [categoria, setCategoria] = useState(initial?.categoria || 'familia');
+  const [nota, setNota] = useState(initial?.nota || '');
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -56,6 +63,12 @@ function AddPersonForm({ onSave, onCancel, initial }) {
               className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]" />
           </div>
           <div>
+            <label className="block text-sm font-medium text-[#8d6e63] mb-1">Nota <span className="text-[#c4a882] font-normal">(opcional)</span></label>
+            <input type="text" value={nota} onChange={e => setNota(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]"
+              placeholder="Ej: vecina del 3B, compañera de yoga..." />
+          </div>
+          <div>
             <label className="block text-sm font-medium text-[#8d6e63] mb-1">Categoría</label>
             <div className="grid grid-cols-2 gap-2">
               {CATEGORIES.map(c => (
@@ -70,7 +83,7 @@ function AddPersonForm({ onSave, onCancel, initial }) {
         </div>
         <div className="flex gap-3 mt-6">
           <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63] font-medium">Cancelar</button>
-          <button onClick={() => { if (nombre && fecha) onSave({ nombre, fecha_nacimiento: fecha, categoria }); }}
+          <button onClick={() => { if (nombre && fecha) onSave({ nombre, fecha_nacimiento: fecha, categoria, nota: nota || null }); }}
             disabled={!nombre || !fecha}
             className="flex-1 py-3 rounded-xl gradient-mystic text-white font-medium disabled:opacity-40">
             Guardar
@@ -103,7 +116,7 @@ function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
   );
 }
 
-function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory }) {
+function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota }) {
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const element = getChineseElement(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
@@ -130,6 +143,13 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory 
           <button onClick={onChangeCategory}
             className="mt-2 inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-all">
             {cat.label} <span className="opacity-60">✎</span>
+          </button>
+          {persona.nota && (
+            <p className="mt-2 text-sm text-white/50 italic">"{persona.nota}"</p>
+          )}
+          <button onClick={onEditNota}
+            className="mt-1 text-xs text-white/40 hover:text-white/70 transition-all">
+            {persona.nota ? '✎ editar nota' : '+ agregar nota'}
           </button>
         </div>
       </div>
@@ -279,6 +299,24 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
   );
 }
 
+function NoteEditor({ currentNote, onSave, onCancel }) {
+  const [nota, setNota] = useState(currentNote || '');
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-[#faf5eb] w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl p-6">
+        <h2 className="text-lg font-bold text-[#2d1f0e] mb-4">Nota</h2>
+        <input type="text" value={nota} onChange={e => setNota(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]"
+          placeholder="Ej: vecina del 3B, compañera de yoga..." autoFocus />
+        <div className="flex gap-3 mt-4">
+          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63]">Cancelar</button>
+          <button onClick={() => onSave(nota || null)} className="flex-1 py-3 rounded-xl gradient-mystic text-white font-medium">Guardar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [personas, setPersonas] = useState([]);
   const [view, setView] = useState('list');
@@ -287,6 +325,7 @@ export default function Home() {
   const [comparePair, setComparePair] = useState(null);
   const [showCompareSelect, setShowCompareSelect] = useState(false);
   const [showCategoryChanger, setShowCategoryChanger] = useState(false);
+  const [showNoteEditor, setShowNoteEditor] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('all');
@@ -329,6 +368,17 @@ export default function Home() {
     setShowCategoryChanger(false);
   };
 
+  const handleEditNota = async (newNota) => {
+    if (!selected) return;
+    const updated = await updatePersona(selected.id, { nota: newNota });
+    if (updated) {
+      const updatedPerson = { ...selected, nota: newNota };
+      setPersonas(prev => prev.map(p => p.id === selected.id ? updatedPerson : p));
+      setSelected(updatedPerson);
+    }
+    setShowNoteEditor(false);
+  };
+
   const handleInstall = async () => {
     if (installPrompt) { installPrompt.prompt(); setInstallPrompt(null); }
   };
@@ -347,7 +397,8 @@ export default function Home() {
           onBack={() => { setView('list'); setSelected(null); }}
           onCompare={() => setShowCompareSelect(true)}
           onDelete={() => handleDelete(selected.id)}
-          onChangeCategory={() => setShowCategoryChanger(true)} />
+          onChangeCategory={() => setShowCategoryChanger(true)}
+          onEditNota={() => setShowNoteEditor(true)} />
         {showCompareSelect && (
           <CompareSelector personas={personas} current={selected}
             onSelect={(p2) => { setComparePair([selected, p2]); setShowCompareSelect(false); setView('compare'); }}
@@ -357,6 +408,11 @@ export default function Home() {
           <CategoryChanger currentCat={selected.categoria}
             onChangeCat={handleChangeCategory}
             onCancel={() => setShowCategoryChanger(false)} />
+        )}
+        {showNoteEditor && (
+          <NoteEditor currentNote={selected.nota}
+            onSave={handleEditNota}
+            onCancel={() => setShowNoteEditor(false)} />
         )}
       </>
     );
