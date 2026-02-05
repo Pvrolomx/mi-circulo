@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --gold: #d4a843;
+  --gold-light: #f0d68a;
+  --red-dark: #8c2424;
+  --cream: #faf5eb;
+  --sand: #f0e6d3;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--cream);
+  color: #2d1f0e;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: 'Cinzel', serif;
+}
+
+.card-glow {
+  box-shadow: 0 2px 20px rgba(212, 168, 67, 0.15);
+}
+
+.gradient-mystic {
+  background: linear-gradient(135deg, #2d1f0e 0%, #4a2020 50%, #1a0a0a 100%);
+}
