@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export } from '@/lib/numerology';
+import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS } from '@/lib/numerology';
 import { getPersonas, addPersona, updatePersona, deletePersona } from '@/lib/supabase';
 
 const CATEGORIES = [
@@ -290,6 +290,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('all');
+  const [filterZodiac, setFilterZodiac] = useState('all');
+  const [showZodiacFilter, setShowZodiacFilter] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
 
   useEffect(() => {
@@ -334,7 +336,8 @@ export default function Home() {
   const filtered = personas.filter(p => {
     const matchSearch = !search || p.nombre.toLowerCase().includes(search.toLowerCase());
     const matchCat = filterCat === 'all' || p.categoria === filterCat;
-    return matchSearch && matchCat;
+    const matchZodiac = filterZodiac === 'all' || getChineseZodiac(p.fecha_nacimiento).name === filterZodiac;
+    return matchSearch && matchCat && matchZodiac;
   });
 
   if (view === 'profile' && selected) {
@@ -400,6 +403,31 @@ export default function Home() {
             </button>
           );
         })}
+      </div>
+
+      {/* Zodiac filter */}
+      <div className="px-4 mt-2">
+        <button onClick={() => setShowZodiacFilter(!showZodiacFilter)}
+          className={`px-4 py-1.5 rounded-full text-sm transition-all ${filterZodiac !== 'all' ? 'bg-[#d4a843] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
+          {filterZodiac !== 'all' ? `${ZODIAC_ANIMALS.find(a => a.name === filterZodiac)?.emoji} ${filterZodiac}` : '🐲 Filtrar por signo'} {showZodiacFilter ? '▲' : '▼'}
+        </button>
+        {showZodiacFilter && (
+          <div className="mt-2 grid grid-cols-4 gap-1.5">
+            <button onClick={() => { setFilterZodiac('all'); setShowZodiacFilter(false); }}
+              className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterZodiac === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white border border-[#f0e6d3] text-[#8d6e63]'}`}>
+              Todos
+            </button>
+            {ZODIAC_ANIMALS.map(a => {
+              const count = personas.filter(p => getChineseZodiac(p.fecha_nacimiento).name === a.name).length;
+              return (
+                <button key={a.name} onClick={() => { setFilterZodiac(a.name); setShowZodiacFilter(false); }}
+                  className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterZodiac === a.name ? 'bg-[#d4a843] text-white' : 'bg-white border border-[#f0e6d3] text-[#2d1f0e]'}`}>
+                  {a.emoji} {a.name} {count > 0 && <span className="opacity-60">({count})</span>}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div className="px-4 mt-4 space-y-3">
