@@ -273,7 +273,7 @@ function CompareView({ person1, person2, onBack }) {
 }
 
 function CompareSelector({ personas, current, onSelect, onCancel }) {
-  const others = personas.filter(p => p.id !== current.id);
+  const others = personas.filter(p => p.id !== current.id).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center">
       <div className="bg-[#faf5eb] w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 max-h-[70vh] overflow-auto">
