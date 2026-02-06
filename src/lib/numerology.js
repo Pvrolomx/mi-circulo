@@ -169,3 +169,118 @@ export function calcCompatibility(person1, person2) {
 }
 
 export { ZODIAC_ANIMALS, ELEMENTS, LIFE_NUMBER_MEANINGS };
+
+// ═══ ZODIACO OCCIDENTAL ═══
+const WESTERN_SIGNS = [
+  { name: 'Capricornio', emoji: '♑', element: 'Tierra', start: [12, 22], end: [1, 19] },
+  { name: 'Acuario', emoji: '♒', element: 'Aire', start: [1, 20], end: [2, 18] },
+  { name: 'Piscis', emoji: '♓', element: 'Agua', start: [2, 19], end: [3, 20] },
+  { name: 'Aries', emoji: '♈', element: 'Fuego', start: [3, 21], end: [4, 19] },
+  { name: 'Tauro', emoji: '♉', element: 'Tierra', start: [4, 20], end: [5, 20] },
+  { name: 'Géminis', emoji: '♊', element: 'Aire', start: [5, 21], end: [6, 20] },
+  { name: 'Cáncer', emoji: '♋', element: 'Agua', start: [6, 21], end: [7, 22] },
+  { name: 'Leo', emoji: '♌', element: 'Fuego', start: [7, 23], end: [8, 22] },
+  { name: 'Virgo', emoji: '♍', element: 'Tierra', start: [8, 23], end: [9, 22] },
+  { name: 'Libra', emoji: '♎', element: 'Aire', start: [9, 23], end: [10, 22] },
+  { name: 'Escorpio', emoji: '♏', element: 'Agua', start: [10, 23], end: [11, 21] },
+  { name: 'Sagitario', emoji: '♐', element: 'Fuego', start: [11, 22], end: [12, 21] },
+];
+
+export function getWesternSign(dateStr) {
+  const date = new Date(dateStr + 'T12:00:00');
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  for (const sign of WESTERN_SIGNS) {
+    const [sm, sd] = sign.start;
+    const [em, ed] = sign.end;
+    if (sm === 12 && em === 1) {
+      if ((month === 12 && day >= sd) || (month === 1 && day <= ed)) return sign;
+    } else {
+      if ((month === sm && day >= sd) || (month === em && day <= ed)) return sign;
+    }
+  }
+  return WESTERN_SIGNS[0];
+}
+
+// Compatibilidad occidental por elementos
+const WESTERN_ELEMENT_COMPAT = {
+  'Fuego-Fuego': 8, 'Fuego-Aire': 9, 'Fuego-Tierra': 4, 'Fuego-Agua': 3,
+  'Tierra-Tierra': 7, 'Tierra-Agua': 9, 'Tierra-Aire': 4,
+  'Aire-Aire': 7, 'Aire-Agua': 4,
+  'Agua-Agua': 8,
+};
+
+function getWesternCompat(sign1, sign2) {
+  const key1 = `${sign1.element}-${sign2.element}`;
+  const key2 = `${sign2.element}-${sign1.element}`;
+  return WESTERN_ELEMENT_COMPAT[key1] || WESTERN_ELEMENT_COMPAT[key2] || 5;
+}
+
+// ═══ VÉDICO (simplificado — sin hora de nacimiento) ═══
+const NAKSHATRAS = [
+  'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra',
+  'Punarvasu', 'Pushya', 'Ashlesha', 'Magha', 'Purva Phalguni', 'Uttara Phalguni',
+  'Hasta', 'Chitra', 'Swati', 'Vishakha', 'Anuradha', 'Jyeshtha',
+  'Mula', 'Purva Ashadha', 'Uttara Ashadha', 'Shravana', 'Dhanishta',
+  'Shatabhisha', 'Purva Bhadrapada', 'Uttara Bhadrapada', 'Revati'
+];
+
+// Simplified moon longitude calculation (without astronomy-engine)
+function approxMoonLong(dateStr) {
+  const date = new Date(dateStr + 'T12:00:00');
+  const J2000 = new Date('2000-01-01T12:00:00Z');
+  const days = (date - J2000) / 86400000;
+  const L = (218.316 + 13.176396 * days) % 360;
+  const ayanamsa = 23.85 + ((date.getFullYear() - 2000) * 0.0139);
+  return ((L - ayanamsa) % 360 + 360) % 360;
+}
+
+export function getNakshatra(dateStr) {
+  const moonLong = approxMoonLong(dateStr);
+  const idx = Math.floor(moonLong / (360 / 27)) % 27;
+  return { name: NAKSHATRAS[idx], index: idx };
+}
+
+// Nakshatra compatibility (simplified: same group = high, adjacent = medium)
+function getNakshatraCompat(n1, n2) {
+  const diff = Math.abs(n1.index - n2.index);
+  const minDiff = Math.min(diff, 27 - diff);
+  if (minDiff === 0) return 8;
+  if (minDiff <= 3) return 7;
+  if (minDiff <= 6) return 6;
+  if (minDiff <= 9) return 5;
+  return 4;
+}
+
+// ═══ COMPATIBILIDAD 4 TRADICIONES ═══
+export function calcFullCompatibility(person1, person2) {
+  // 1. Chinese (existing)
+  const chineseCompat = calcCompatibility(person1, person2);
+
+  // 2. Western
+  const w1 = getWesternSign(person1.fecha_nacimiento);
+  const w2 = getWesternSign(person2.fecha_nacimiento);
+  const westernScore = getWesternCompat(w1, w2);
+
+  // 3. Vedic (Nakshatra)
+  const nk1 = getNakshatra(person1.fecha_nacimiento);
+  const nk2 = getNakshatra(person2.fecha_nacimiento);
+  const vedicScore = getNakshatraCompat(nk1, nk2);
+
+  // 4. Numerology (already in chinese)
+  const numScore = chineseCompat.numScore;
+
+  // Overall: weighted average of all 4
+  const overall = Math.round((chineseCompat.overall * 0.3 + westernScore * 0.25 + vedicScore * 0.2 + numScore * 0.25) * 10) / 10;
+
+  return {
+    overall,
+    chinese: { score: chineseCompat.overall, zodiac1: getChineseZodiac(person1.fecha_nacimiento), zodiac2: getChineseZodiac(person2.fecha_nacimiento) },
+    western: { score: westernScore, sign1: w1, sign2: w2 },
+    vedic: { score: vedicScore, nakshatra1: nk1, nakshatra2: nk2 },
+    numerology: { score: numScore, num1: calcLifeNumber(person1.fecha_nacimiento), num2: calcLifeNumber(person2.fecha_nacimiento) },
+    tips: chineseCompat.tips,
+  };
+}
+
+export { WESTERN_SIGNS };

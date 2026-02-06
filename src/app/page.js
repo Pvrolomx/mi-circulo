@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS } from '@/lib/numerology';
+import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra } from '@/lib/numerology';
 import { getPersonas, addPersona, updatePersona, deletePersona } from '@/lib/supabase';
 
 const CATEGORIES = [
@@ -205,11 +205,14 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 }
 
 function CompareView({ person1, person2, onBack }) {
+  const [showFull, setShowFull] = useState(false);
   const compat = calcCompatibility(person1, person2);
   const z1 = getChineseZodiac(person1.fecha_nacimiento);
   const z2 = getChineseZodiac(person2.fecha_nacimiento);
   const n1 = calcLifeNumber(person1.fecha_nacimiento);
   const n2 = calcLifeNumber(person2.fecha_nacimiento);
+
+  const fullCompat = showFull ? calcFullCompatibility(person1, person2) : null;
 
   const ScoreBar = ({ label, score }) => (
     <div>
@@ -268,6 +271,30 @@ function CompareView({ person1, person2, onBack }) {
             ))}
           </div>
         </div>
+
+        {/* 4 Traditions */}
+        {!showFull ? (
+          <button onClick={() => setShowFull(true)}
+            className="w-full py-3 rounded-2xl border border-[#d4a843] text-[#d4a843] text-sm font-medium hover:bg-[#d4a843]/10 transition-all">
+            🔮 Ver compatibilidad en 4 tradiciones
+          </button>
+        ) : fullCompat && (
+          <div className="bg-white rounded-2xl p-5 card-glow space-y-4">
+            <div className="text-center mb-2">
+              <p className="text-xs text-[#c4a882]">Compatibilidad 4 Tradiciones</p>
+              <p className="text-3xl font-bold" style={{
+                color: fullCompat.overall >= 7 ? '#2e7d32' : fullCompat.overall >= 5 ? '#d4a843' : '#c62828'
+              }}>{fullCompat.overall}<span className="text-sm text-[#8d6e63] font-normal">/10</span></p>
+            </div>
+
+            <ScoreBar label={`🐲 Chino — ${fullCompat.chinese.zodiac1.name} + ${fullCompat.chinese.zodiac2.name}`} score={fullCompat.chinese.score} />
+            <ScoreBar label={`${fullCompat.western.sign1.emoji} Occidental — ${fullCompat.western.sign1.name} + ${fullCompat.western.sign2.name}`} score={fullCompat.western.score} />
+            <ScoreBar label={`🪷 Védico — ${fullCompat.vedic.nakshatra1.name} + ${fullCompat.vedic.nakshatra2.name}`} score={fullCompat.vedic.score} />
+            <ScoreBar label={`🔢 Numerología — ${fullCompat.numerology.num1} + ${fullCompat.numerology.num2}`} score={fullCompat.numerology.score} />
+
+            <p className="text-xs text-[#c4a882] text-center mt-2">Védico aproximado sin hora de nacimiento</p>
+          </div>
+        )}
       </div>
     </div>
   );
