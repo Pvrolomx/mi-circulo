@@ -1,12 +1,12 @@
 // Zodiaco Chino - ciclo de 12 años
 const ZODIAC_ANIMALS = [
   { name: 'Rata', emoji: '🐀', traits: 'Ingeniosa, astuta, versátil, encantadora' },
-  { name: 'Buey', emoji: '🐂', traits: 'Fuerte, confiable, determinada, paciente' },
-  { name: 'Tigre', emoji: '🐅', traits: 'Valiente, competitiva, impredecible, segura' },
+  { name: 'Buey', emoji: '🐂', traits: 'Fuerte, confiable, determinado, paciente' },
+  { name: 'Tigre', emoji: '🐅', traits: 'Valiente, competitivo, impredecible, seguro' },
   { name: 'Conejo', emoji: '🐇', traits: 'Elegante, amable, responsable, prudente' },
   { name: 'Dragón', emoji: '🐉', traits: 'Enérgico, audaz, ambicioso, carismático' },
   { name: 'Serpiente', emoji: '🐍', traits: 'Sabia, intuitiva, elegante, misteriosa' },
-  { name: 'Caballo', emoji: '🐴', traits: 'Libre, activa, enérgica, aventurera' },
+  { name: 'Caballo', emoji: '🐴', traits: 'Libre, activo, enérgico, aventurero' },
   { name: 'Cabra', emoji: '🐐', traits: 'Creativa, compasiva, gentil, artística' },
   { name: 'Mono', emoji: '🐵', traits: 'Ingenioso, curioso, juguetón, inteligente' },
   { name: 'Gallo', emoji: '🐓', traits: 'Observador, trabajador, valiente, puntual' },
