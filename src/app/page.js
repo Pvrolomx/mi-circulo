@@ -116,7 +116,7 @@ function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
   );
 }
 
-function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota }) {
+function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota, onEdit }) {
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const element = getChineseElement(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
@@ -132,6 +132,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
         <div className="flex items-center gap-3 mb-6">
           <button onClick={onBack} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">←</button>
           <div className="flex-1" />
+          <button onClick={onEdit} className="text-sm text-white/60 hover:text-white mr-3">Editar</button>
           <button onClick={onDelete} className="text-sm text-white/60 hover:text-red-300">Eliminar</button>
         </div>
         <div className="text-center">
@@ -326,6 +327,7 @@ export default function Home() {
   const [showCompareSelect, setShowCompareSelect] = useState(false);
   const [showCategoryChanger, setShowCategoryChanger] = useState(false);
   const [showNoteEditor, setShowNoteEditor] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('all');
@@ -379,6 +381,17 @@ export default function Home() {
     setShowNoteEditor(false);
   };
 
+  const handleEdit = async (data) => {
+    if (!selected) return;
+    const updated = await updatePersona(selected.id, data);
+    if (updated) {
+      const updatedPerson = { ...selected, ...data };
+      setPersonas(prev => prev.map(p => p.id === selected.id ? updatedPerson : p));
+      setSelected(updatedPerson);
+    }
+    setShowEdit(false);
+  };
+
   const handleInstall = async () => {
     if (installPrompt) { installPrompt.prompt(); setInstallPrompt(null); }
   };
@@ -398,7 +411,8 @@ export default function Home() {
           onCompare={() => setShowCompareSelect(true)}
           onDelete={() => handleDelete(selected.id)}
           onChangeCategory={() => setShowCategoryChanger(true)}
-          onEditNota={() => setShowNoteEditor(true)} />
+          onEditNota={() => setShowNoteEditor(true)}
+          onEdit={() => setShowEdit(true)} />
         {showCompareSelect && (
           <CompareSelector personas={personas} current={selected}
             onSelect={(p2) => { setComparePair([selected, p2]); setShowCompareSelect(false); setView('compare'); }}
@@ -413,6 +427,11 @@ export default function Home() {
           <NoteEditor currentNote={selected.nota}
             onSave={handleEditNota}
             onCancel={() => setShowNoteEditor(false)} />
+        )}
+        {showEdit && (
+          <AddPersonForm initial={selected}
+            onSave={handleEdit}
+            onCancel={() => setShowEdit(false)} />
         )}
       </>
     );
