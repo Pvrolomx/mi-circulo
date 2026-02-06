@@ -388,7 +388,7 @@ export default function Home() {
     const matchCat = filterCat === 'all' || p.categoria === filterCat;
     const matchZodiac = filterZodiac === 'all' || getChineseZodiac(p.fecha_nacimiento).name === filterZodiac;
     return matchSearch && matchCat && matchZodiac;
-  });
+  }).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
 
   if (view === 'profile' && selected) {
     return (
