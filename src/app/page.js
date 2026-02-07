@@ -43,6 +43,7 @@ function PersonCard({ persona, onClick }) {
 function AddPersonForm({ onSave, onCancel, initial }) {
   const [nombre, setNombre] = useState(initial?.nombre || '');
   const [fecha, setFecha] = useState(initial?.fecha_nacimiento || '');
+  const [hora, setHora] = useState(initial?.hora_nacimiento || '');
   const [categoria, setCategoria] = useState(initial?.categoria || 'familia');
   const [nota, setNota] = useState(initial?.nota || '');
 
@@ -60,6 +61,11 @@ function AddPersonForm({ onSave, onCancel, initial }) {
           <div>
             <label className="block text-sm font-medium text-[#8d6e63] mb-1">Fecha de nacimiento</label>
             <input type="date" value={fecha} onChange={e => setFecha(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#8d6e63] mb-1">Hora de nacimiento <span className="text-[#c4a882] font-normal">(opcional — mejora Nakshatra)</span></label>
+            <input type="time" value={hora} onChange={e => setHora(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]" />
           </div>
           <div>
@@ -83,7 +89,7 @@ function AddPersonForm({ onSave, onCancel, initial }) {
         </div>
         <div className="flex gap-3 mt-6">
           <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63] font-medium">Cancelar</button>
-          <button onClick={() => { if (nombre && fecha) onSave({ nombre, fecha_nacimiento: fecha, categoria, nota: nota || null }); }}
+          <button onClick={() => { if (nombre && fecha) onSave({ nombre, fecha_nacimiento: fecha, hora_nacimiento: hora || null, categoria, nota: nota || null }); }}
             disabled={!nombre || !fecha}
             className="flex-1 py-3 rounded-xl gradient-mystic text-white font-medium disabled:opacity-40">
             Guardar
@@ -148,7 +154,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
             {zodiac.emoji}
           </div>
           <h1 className="text-2xl font-bold">{persona.nombre}</h1>
-          <p className="text-white/70 mt-1">{birthDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p className="text-white/70 mt-1">{birthDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}{persona.hora_nacimiento ? ` · ${persona.hora_nacimiento} hrs` : ''}</p>
           <button onClick={onChangeCategory}
             className="mt-2 inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-all">
             {cat.label} <span className="opacity-60">✎</span>
