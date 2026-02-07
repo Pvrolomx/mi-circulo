@@ -129,6 +129,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
   const soulNum = calcSoulNumber(persona.nombre);
   const destinyNum = calcDestinyNumber(persona.nombre);
   const western = getWesternSign(persona.fecha_nacimiento);
+  const nakshatra = getNakshatra(persona.fecha_nacimiento, persona.hora_nacimiento || null);
   const allies = getAllies(zodiac.name);
   const enemy = getEnemy(zodiac.name);
   const relationships = allPersonas ? matchRelationships(persona, allPersonas) : null;
@@ -222,6 +223,21 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
             <div>
               <h3 className="font-bold text-[#2d1f0e]">{western.name}</h3>
               <p className="text-sm text-[#8d6e63] mt-1">Elemento: {western.element} · {western.modality}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Nakshatra Védico */}
+        <div className="bg-white rounded-2xl p-5 card-glow">
+          <p className="text-sm text-[#8d6e63] mb-2">Nakshatra Védico</p>
+          <div className="flex items-center gap-4">
+            <span className="text-4xl">🪷</span>
+            <div>
+              <h3 className="font-bold text-[#2d1f0e]">{nakshatra.name}</h3>
+              <p className="text-sm text-[#8d6e63] mt-1">Pada {nakshatra.pada} · Grupo: {nakshatra.group}</p>
+              <p className="text-xs text-[#c4a882] mt-1">
+                {nakshatra.precision === 'buena' ? '✓ Precisión buena (con hora)' : '≈ Aproximado (sin hora de nacimiento)'}
+              </p>
             </div>
           </div>
         </div>
