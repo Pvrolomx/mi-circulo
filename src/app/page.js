@@ -396,6 +396,50 @@ function CompareView({ person1, person2, onBack }) {
               }}>{fullCompat.overall}<span className="text-sm text-[#8d6e63] font-normal">/10</span></p>
             </div>
 
+            {/* Radar Chart */}
+            <div className="flex justify-center">
+              <svg viewBox="0 0 200 200" width="220" height="220">
+                {/* Background grid */}
+                {[0.25, 0.5, 0.75, 1].map((scale, i) => {
+                  const r = 70 * scale;
+                  const points = [0, 1, 2, 3].map(j => {
+                    const angle = (Math.PI / 2) * j - Math.PI / 2;
+                    return `${100 + r * Math.cos(angle)},${100 + r * Math.sin(angle)}`;
+                  }).join(' ');
+                  return <polygon key={i} points={points} fill="none" stroke="#f0e6d3" strokeWidth={i === 3 ? 1.5 : 0.5} />;
+                })}
+                {/* Axis lines */}
+                {[0, 1, 2, 3].map(j => {
+                  const angle = (Math.PI / 2) * j - Math.PI / 2;
+                  return <line key={j} x1="100" y1="100" x2={100 + 70 * Math.cos(angle)} y2={100 + 70 * Math.sin(angle)} stroke="#f0e6d3" strokeWidth="0.5" />;
+                })}
+                {/* Data polygon */}
+                {(() => {
+                  const scores = [fullCompat.chinese.score, fullCompat.western.score, fullCompat.vedic.score, fullCompat.numerology.score];
+                  const points = scores.map((s, j) => {
+                    const angle = (Math.PI / 2) * j - Math.PI / 2;
+                    const r = (s / 10) * 70;
+                    return `${100 + r * Math.cos(angle)},${100 + r * Math.sin(angle)}`;
+                  }).join(' ');
+                  return (
+                    <>
+                      <polygon points={points} fill="rgba(212,168,67,0.2)" stroke="#d4a843" strokeWidth="2" />
+                      {scores.map((s, j) => {
+                        const angle = (Math.PI / 2) * j - Math.PI / 2;
+                        const r = (s / 10) * 70;
+                        return <circle key={j} cx={100 + r * Math.cos(angle)} cy={100 + r * Math.sin(angle)} r="4" fill="#d4a843" />;
+                      })}
+                    </>
+                  );
+                })()}
+                {/* Labels */}
+                <text x="100" y="18" textAnchor="middle" fontSize="11" fill="#8d6e63">🐲 Chino</text>
+                <text x="185" y="104" textAnchor="start" fontSize="11" fill="#8d6e63">♈ Occ.</text>
+                <text x="100" y="192" textAnchor="middle" fontSize="11" fill="#8d6e63">🪷 Védico</text>
+                <text x="15" y="104" textAnchor="end" fontSize="11" fill="#8d6e63">🔢 Num.</text>
+              </svg>
+            </div>
+
             <ScoreBar label={`🐲 Chino — ${fullCompat.chinese.zodiac1.name} + ${fullCompat.chinese.zodiac2.name}`} score={fullCompat.chinese.score} />
             <ScoreBar label={`${fullCompat.western.sign1.emoji} Occidental — ${fullCompat.western.sign1.name} + ${fullCompat.western.sign2.name}`} score={fullCompat.western.score} />
             <ScoreBar label={`🪷 Védico — ${fullCompat.vedic.nakshatra1.name} + ${fullCompat.vedic.nakshatra2.name}`} score={fullCompat.vedic.score} />
