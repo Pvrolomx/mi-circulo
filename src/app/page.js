@@ -638,20 +638,8 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
           </div>
         </div>
 
-        {/* Top 10 Rankings */}
+        {/* Rankings por Categoría */}
         {filtered.length >= 2 && (() => {
-          const pairs = [];
-          for (let i = 0; i < filtered.length; i++) {
-            for (let j = i + 1; j < filtered.length; j++) {
-              const c = calcCompatibility(filtered[i], filtered[j]);
-              pairs.push({ p1: filtered[i], p2: filtered[j], score: c.overall,
-                z1: getChineseZodiac(filtered[i].fecha_nacimiento),
-                z2: getChineseZodiac(filtered[j].fecha_nacimiento) });
-            }
-          }
-          const top = [...pairs].sort((a, b) => b.score - a.score).slice(0, 10);
-          const bottom = [...pairs].sort((a, b) => a.score - b.score).slice(0, 10);
-
           const PairRow = ({ pair, rank }) => (
             <div className="flex items-center gap-2 py-2">
               <span className="text-xs text-[#c4a882] w-5 text-right shrink-0">{rank}</span>
@@ -668,25 +656,67 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
             </div>
           );
 
+          const calcPairs = (list) => {
+            const pairs = [];
+            for (let i = 0; i < list.length; i++) {
+              for (let j = i + 1; j < list.length; j++) {
+                const c = calcCompatibility(list[i], list[j]);
+                pairs.push({ p1: list[i], p2: list[j], score: c.overall,
+                  z1: getChineseZodiac(list[i].fecha_nacimiento),
+                  z2: getChineseZodiac(list[j].fecha_nacimiento) });
+              }
+            }
+            return pairs;
+          };
+
+          // Global top/bottom from filtered
+          const allPairs = calcPairs(filtered);
+          const globalTop = [...allPairs].sort((a, b) => b.score - a.score).slice(0, 10);
+          const globalBottom = [...allPairs].sort((a, b) => a.score - b.score).slice(0, 10);
+
+          // Per-category rankings
+          const catGroups = CATEGORIES.map(c => {
+            const catPersonas = filtered.filter(p => p.categoria === c.value);
+            if (catPersonas.length < 2) return null;
+            const pairs = calcPairs(catPersonas);
+            return { cat: c, top: [...pairs].sort((a, b) => b.score - a.score).slice(0, 5),
+              bottom: [...pairs].sort((a, b) => a.score - b.score).slice(0, 5) };
+          }).filter(Boolean);
+
           return (
             <>
               <div className="bg-white rounded-2xl p-5 card-glow">
                 <p className="text-sm font-semibold text-[#2d1f0e] mb-1">💚 Top 10 Afinidades</p>
                 <p className="text-xs text-[#c4a882] mb-3">Pares con mayor compatibilidad</p>
                 <div className="divide-y divide-[#f0e6d3]">
-                  {top.map((pair, i) => <PairRow key={`${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
+                  {globalTop.map((pair, i) => <PairRow key={`t-${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
                 </div>
-                {top.length === 0 && <p className="text-xs text-[#c4a882] text-center py-4">Agrega más personas para ver rankings</p>}
               </div>
 
               <div className="bg-white rounded-2xl p-5 card-glow">
                 <p className="text-sm font-semibold text-[#2d1f0e] mb-1">⚡ Top 10 Opuestos</p>
                 <p className="text-xs text-[#c4a882] mb-3">Pares que requieren más paciencia</p>
                 <div className="divide-y divide-[#f0e6d3]">
-                  {bottom.map((pair, i) => <PairRow key={`${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
+                  {globalBottom.map((pair, i) => <PairRow key={`b-${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
                 </div>
-                {bottom.length === 0 && <p className="text-xs text-[#c4a882] text-center py-4">Agrega más personas para ver rankings</p>}
               </div>
+
+              {catGroups.length > 0 && catGroups.map(({ cat, top, bottom }) => (
+                <div key={cat.value} className="bg-white rounded-2xl p-5 card-glow">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full text-white" style={{ background: cat.color }}>{cat.label}</span>
+                    <span className="text-xs text-[#c4a882]">Rankings internos</span>
+                  </div>
+                  <p className="text-xs font-medium text-[#2e7d32] mb-2">💚 Top 5 Afinidades</p>
+                  <div className="divide-y divide-[#f0e6d3] mb-4">
+                    {top.map((pair, i) => <PairRow key={`ct-${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
+                  </div>
+                  <p className="text-xs font-medium text-[#c62828] mb-2">⚡ Top 5 Opuestos</p>
+                  <div className="divide-y divide-[#f0e6d3]">
+                    {bottom.map((pair, i) => <PairRow key={`cb-${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
+                  </div>
+                </div>
+              ))}
             </>
           );
         })()}
