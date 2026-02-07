@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra } from '@/lib/numerology';
+import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES } from '@/lib/numerology';
 import { getPersonas, addPersona, updatePersona, deletePersona } from '@/lib/supabase';
 
 const CATEGORIES = [
@@ -116,7 +116,7 @@ function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
   );
 }
 
-function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota, onEdit }) {
+function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota, onEdit, allPersonas }) {
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const element = getChineseElement(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
@@ -125,6 +125,13 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
   const birthDate = new Date(persona.fecha_nacimiento + 'T12:00:00');
   const gregorianYear = birthDate.getFullYear();
   const cat = CATEGORIES.find(c => c.value === persona.categoria) || CATEGORIES[0];
+  const yinYang = getYinYang(persona.fecha_nacimiento);
+  const soulNum = calcSoulNumber(persona.nombre);
+  const destinyNum = calcDestinyNumber(persona.nombre);
+  const western = getWesternSign(persona.fecha_nacimiento);
+  const allies = getAllies(zodiac.name);
+  const enemy = getEnemy(zodiac.name);
+  const relationships = allPersonas ? matchRelationships(persona, allPersonas) : null;
 
   return (
     <div className="min-h-screen bg-[#faf5eb]">
@@ -195,6 +202,87 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           </div>
         </div>
 
+        {/* Yin / Yang */}
+        <div className="bg-white rounded-2xl p-5 card-glow">
+          <p className="text-sm text-[#8d6e63] mb-2">Yin / Yang</p>
+          <div className="flex items-center gap-4">
+            <span className="text-4xl">{yinYang.emoji}</span>
+            <div>
+              <h3 className="font-bold text-[#2d1f0e]">{yinYang.type}</h3>
+              <p className="text-sm text-[#8d6e63] mt-1">{yinYang.desc}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Zodiaco Occidental */}
+        <div className="bg-white rounded-2xl p-5 card-glow">
+          <p className="text-sm text-[#8d6e63] mb-2">Zodiaco Occidental</p>
+          <div className="flex items-center gap-4">
+            <span className="text-4xl">{western.emoji}</span>
+            <div>
+              <h3 className="font-bold text-[#2d1f0e]">{western.name}</h3>
+              <p className="text-sm text-[#8d6e63] mt-1">Elemento: {western.element} · {western.modality}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Soul & Destiny Numbers */}
+        <div className="bg-white rounded-2xl p-5 card-glow">
+          <p className="text-sm text-[#8d6e63] mb-3">Numerología del Nombre</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center p-3 rounded-xl bg-[#faf5eb]">
+              <p className="text-xs text-[#c4a882] mb-1">Nº del Alma</p>
+              <span className="text-3xl font-bold text-[#d4a843]">{soulNum ?? '—'}</span>
+              <p className="text-xs text-[#8d6e63] mt-1">Deseos internos</p>
+            </div>
+            <div className="text-center p-3 rounded-xl bg-[#faf5eb]">
+              <p className="text-xs text-[#c4a882] mb-1">Nº del Destino</p>
+              <span className="text-3xl font-bold text-[#d4a843]">{destinyNum ?? '—'}</span>
+              <p className="text-xs text-[#8d6e63] mt-1">Misión de vida</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Aliados y Enemigos */}
+        <div className="bg-white rounded-2xl p-5 card-glow">
+          <p className="text-sm text-[#8d6e63] mb-3">Aliados y Opuestos</p>
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs text-[#c4a882] mb-1.5">🤝 Aliados (triángulo de afinidad)</p>
+              <div className="flex gap-2">
+                {allies.map(a => {
+                  const animal = ZODIAC_ANIMALS.find(z => z.name === a);
+                  return (
+                    <span key={a} className="px-3 py-1.5 rounded-full bg-green-50 text-green-700 text-sm">
+                      {animal?.emoji} {a}
+                    </span>
+                  );
+                })}
+              </div>
+              {relationships && relationships.allies.some(a => a.people.length > 0) && (
+                <div className="mt-2 text-xs text-[#2e7d32]">
+                  {relationships.allies.filter(a => a.people.length > 0).map(a => (
+                    <span key={a.animal}>{a.emoji} {a.people.map(p => p.nombre).join(', ')} · </span>
+                  ))}
+                </div>
+              )}
+            </div>
+            {enemy && (
+              <div>
+                <p className="text-xs text-[#c4a882] mb-1.5">⚡ Opuesto</p>
+                <span className="px-3 py-1.5 rounded-full bg-red-50 text-red-700 text-sm">
+                  {ZODIAC_ANIMALS.find(z => z.name === enemy)?.emoji} {enemy}
+                </span>
+                {relationships && relationships.enemy.people.length > 0 && (
+                  <p className="mt-2 text-xs text-[#c62828]">
+                    {relationships.enemy.people.map(p => p.nombre).join(', ')}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
         <button onClick={onCompare}
           className="w-full py-4 rounded-2xl gradient-mystic text-white font-semibold text-lg hover:opacity-90 transition-all">
           🔮 Comparar con...
@@ -258,8 +346,7 @@ function CompareView({ person1, person2, onBack }) {
         </div>
 
         <div className="bg-white rounded-2xl p-5 card-glow space-y-4">
-          <ScoreBar label="🔮 Zodiaco Chino" score={compat.zodiacScore} />
-          <ScoreBar label="🌳 Elementos" score={compat.elementScore} />
+          <ScoreBar label="🐲 Zodiaco Chino" score={compat.zodiacScore} />
           <ScoreBar label="🔢 Numerología" score={compat.numScore} />
         </div>
 
@@ -434,6 +521,7 @@ export default function Home() {
     return (
       <>
         <PersonProfile persona={selected}
+          allPersonas={personas}
           onBack={() => { setView('list'); setSelected(null); }}
           onCompare={() => setShowCompareSelect(true)}
           onDelete={() => handleDelete(selected.id)}
@@ -475,7 +563,7 @@ export default function Home() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold">Mi Círculo</h1>
-            <p className="text-white/60 text-sm mt-1">Numerología y Zodiaco Chino</p>
+            <p className="text-white/60 text-sm mt-1">4 tradiciones · Zodiaco · Numerología</p>
           </div>
           {installPrompt && (
             <button onClick={handleInstall} className="text-xs px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20">
