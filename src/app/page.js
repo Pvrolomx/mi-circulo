@@ -499,8 +499,12 @@ function NoteEditor({ currentNote, onSave, onCancel }) {
 }
 
 function AffinityMap({ personas, onBack, onSelectPerson }) {
+  const [filterCat, setFilterCat] = useState('all');
+
+  const filtered = filterCat === 'all' ? personas : personas.filter(p => p.categoria === filterCat);
+
   const personsByAnimal = {};
-  personas.forEach(p => {
+  filtered.forEach(p => {
     const z = getChineseZodiac(p.fecha_nacimiento);
     if (!personsByAnimal[z.name]) personsByAnimal[z.name] = [];
     personsByAnimal[z.name].push(p);
@@ -530,13 +534,35 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
             <p className="text-white/60 text-sm">Aliados y opuestos en tu círculo</p>
           </div>
         </div>
+        <div className="flex gap-2 overflow-x-auto pb-1 mt-2">
+          <button onClick={() => setFilterCat('all')}
+            className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${filterCat === 'all' ? 'bg-white text-[#2d1f0e] font-semibold' : 'bg-white/10 text-white/70'}`}>
+            Todos ({personas.length})
+          </button>
+          {CATEGORIES.map(c => {
+            const count = personas.filter(p => p.categoria === c.value).length;
+            return (
+              <button key={c.value} onClick={() => setFilterCat(c.value)}
+                className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${filterCat === c.value ? 'bg-white text-[#2d1f0e] font-semibold' : 'bg-white/10 text-white/70'}`}>
+                {c.label.split(' ')[0]} {c.label.split(' ').slice(1).join(' ')} ({count})
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="px-4 -mt-4 space-y-4 pb-8">
-        {/* Triangles */}
-        <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm font-semibold text-[#2d1f0e] mb-1">🤝 Triángulos de Afinidad</p>
-          <p className="text-xs text-[#c4a882] mb-4">Los 3 signos de cada triángulo son aliados naturales</p>
+        {filtered.length === 0 ? (
+          <div className="bg-white rounded-2xl p-8 card-glow text-center">
+            <p className="text-4xl mb-3">🔮</p>
+            <p className="text-[#8d6e63]">No hay personas en esta categoría</p>
+          </div>
+        ) : (
+          <>
+            {/* Triangles */}
+            <div className="bg-white rounded-2xl p-5 card-glow">
+              <p className="text-sm font-semibold text-[#2d1f0e] mb-1">🤝 Triángulos de Afinidad</p>
+              <p className="text-xs text-[#c4a882] mb-4">Los 3 signos de cada triángulo son aliados naturales</p>
           <div className="space-y-4">
             {triangles.map(tri => {
               const hasAny = tri.animals.some(a => (personsByAnimal[a]?.length || 0) > 0);
@@ -611,6 +637,8 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
             })}
           </div>
         </div>
+          </>
+        )}
       </div>
     </div>
   );
