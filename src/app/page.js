@@ -432,6 +432,124 @@ function NoteEditor({ currentNote, onSave, onCancel }) {
   );
 }
 
+function AffinityMap({ personas, onBack, onSelectPerson }) {
+  const personsByAnimal = {};
+  personas.forEach(p => {
+    const z = getChineseZodiac(p.fecha_nacimiento);
+    if (!personsByAnimal[z.name]) personsByAnimal[z.name] = [];
+    personsByAnimal[z.name].push(p);
+  });
+
+  const triangles = [
+    { animals: ['Rata', 'Dragón', 'Mono'], label: 'Acción', color: '#c62828' },
+    { animals: ['Buey', 'Serpiente', 'Gallo'], label: 'Intelecto', color: '#1565c0' },
+    { animals: ['Tigre', 'Caballo', 'Perro'], label: 'Coraje', color: '#2e7d32' },
+    { animals: ['Conejo', 'Cabra', 'Cerdo'], label: 'Diplomacia', color: '#7b1fa2' },
+  ];
+
+  const opposites = [
+    ['Rata', 'Caballo'], ['Buey', 'Cabra'], ['Tigre', 'Mono'],
+    ['Conejo', 'Gallo'], ['Dragón', 'Perro'], ['Serpiente', 'Cerdo'],
+  ];
+
+  const getEmoji = (name) => ZODIAC_ANIMALS.find(a => a.name === name)?.emoji || '';
+
+  return (
+    <div className="min-h-screen bg-[#faf5eb]">
+      <div className="gradient-mystic text-white p-6 pb-8 rounded-b-3xl">
+        <div className="flex items-center gap-3 mb-4">
+          <button onClick={onBack} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">←</button>
+          <div>
+            <h1 className="text-xl font-bold">Mapa de Afinidades</h1>
+            <p className="text-white/60 text-sm">Aliados y opuestos en tu círculo</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 -mt-4 space-y-4 pb-8">
+        {/* Triangles */}
+        <div className="bg-white rounded-2xl p-5 card-glow">
+          <p className="text-sm font-semibold text-[#2d1f0e] mb-1">🤝 Triángulos de Afinidad</p>
+          <p className="text-xs text-[#c4a882] mb-4">Los 3 signos de cada triángulo son aliados naturales</p>
+          <div className="space-y-4">
+            {triangles.map(tri => {
+              const hasAny = tri.animals.some(a => (personsByAnimal[a]?.length || 0) > 0);
+              return (
+                <div key={tri.label} className={`p-3 rounded-xl border ${hasAny ? 'border-[#d4a843]/30 bg-[#faf5eb]' : 'border-[#f0e6d3] opacity-50'}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full text-white" style={{ background: tri.color }}>{tri.label}</span>
+                    <span className="text-sm">{tri.animals.map(a => getEmoji(a)).join(' ')}</span>
+                  </div>
+                  <div className="flex gap-4">
+                    {tri.animals.map(animal => {
+                      const people = personsByAnimal[animal] || [];
+                      return (
+                        <div key={animal} className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-[#8d6e63]">{getEmoji(animal)} {animal}</p>
+                          {people.length > 0 ? (
+                            <div className="mt-1 space-y-0.5">
+                              {people.map(p => (
+                                <button key={p.id} onClick={() => onSelectPerson(p)}
+                                  className="block text-xs text-[#2d1f0e] hover:text-[#d4a843] truncate w-full text-left">
+                                  {p.nombre}
+                                </button>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-[#c4a882] mt-1">—</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Opposites */}
+        <div className="bg-white rounded-2xl p-5 card-glow">
+          <p className="text-sm font-semibold text-[#2d1f0e] mb-1">⚡ Pares Opuestos</p>
+          <p className="text-xs text-[#c4a882] mb-4">Signos que se desafían mutuamente — requieren paciencia</p>
+          <div className="space-y-3">
+            {opposites.map(([a1, a2]) => {
+              const p1 = personsByAnimal[a1] || [];
+              const p2 = personsByAnimal[a2] || [];
+              const hasConflict = p1.length > 0 && p2.length > 0;
+              return (
+                <div key={a1 + a2} className={`flex items-center gap-3 p-3 rounded-xl border ${hasConflict ? 'border-red-200 bg-red-50/50' : 'border-[#f0e6d3]'}`}>
+                  <div className="flex-1 min-w-0 text-right">
+                    <p className="text-sm">{getEmoji(a1)} {a1}</p>
+                    {p1.map(p => (
+                      <button key={p.id} onClick={() => onSelectPerson(p)}
+                        className="block text-xs text-[#8d6e63] hover:text-[#d4a843] truncate w-full text-right">
+                        {p.nombre}
+                      </button>
+                    ))}
+                    {p1.length === 0 && <p className="text-xs text-[#c4a882]">—</p>}
+                  </div>
+                  <span className="text-lg shrink-0">{hasConflict ? '⚡' : '·'}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm">{getEmoji(a2)} {a2}</p>
+                    {p2.map(p => (
+                      <button key={p.id} onClick={() => onSelectPerson(p)}
+                        className="block text-xs text-[#8d6e63] hover:text-[#d4a843] truncate w-full text-left">
+                        {p.nombre}
+                      </button>
+                    ))}
+                    {p2.length === 0 && <p className="text-xs text-[#c4a882]">—</p>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [personas, setPersonas] = useState([]);
   const [view, setView] = useState('list');
@@ -557,6 +675,12 @@ export default function Home() {
       onBack={() => { setView('profile'); setComparePair(null); }} />;
   }
 
+  if (view === 'affinity') {
+    return <AffinityMap personas={personas}
+      onBack={() => setView('list')}
+      onSelectPerson={(p) => { setSelected(p); setView('profile'); }} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#faf5eb] pb-24">
       <div className="gradient-mystic text-white p-6 pb-8 rounded-b-3xl">
@@ -596,29 +720,35 @@ export default function Home() {
       </div>
 
       {/* Zodiac filter */}
-      <div className="px-4 mt-2">
+      <div className="px-4 mt-2 flex gap-2 flex-wrap">
         <button onClick={() => setShowZodiacFilter(!showZodiacFilter)}
           className={`px-4 py-1.5 rounded-full text-sm transition-all ${filterZodiac !== 'all' ? 'bg-[#d4a843] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
           {filterZodiac !== 'all' ? `${ZODIAC_ANIMALS.find(a => a.name === filterZodiac)?.emoji} ${filterZodiac}` : '🐲 Filtrar por signo'} {showZodiacFilter ? '▲' : '▼'}
         </button>
-        {showZodiacFilter && (
-          <div className="mt-2 grid grid-cols-4 gap-1.5">
-            <button onClick={() => { setFilterZodiac('all'); setShowZodiacFilter(false); }}
-              className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterZodiac === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white border border-[#f0e6d3] text-[#8d6e63]'}`}>
-              Todos
-            </button>
-            {ZODIAC_ANIMALS.map(a => {
-              const count = personas.filter(p => getChineseZodiac(p.fecha_nacimiento).name === a.name).length;
-              return (
-                <button key={a.name} onClick={() => { setFilterZodiac(a.name); setShowZodiacFilter(false); }}
-                  className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterZodiac === a.name ? 'bg-[#d4a843] text-white' : 'bg-white border border-[#f0e6d3] text-[#2d1f0e]'}`}>
-                  {a.emoji} {a.name} {count > 0 && <span className="opacity-60">({count})</span>}
-                </button>
-              );
-            })}
-          </div>
+        {personas.length >= 2 && (
+          <button onClick={() => setView('affinity')}
+            className="px-4 py-1.5 rounded-full text-sm bg-white text-[#8d6e63] border border-[#f0e6d3] hover:border-[#d4a843] transition-all">
+            🤝 Aliados y Opuestos
+          </button>
         )}
       </div>
+      {showZodiacFilter && (
+        <div className="px-4 mt-2 grid grid-cols-4 gap-1.5">
+          <button onClick={() => { setFilterZodiac('all'); setShowZodiacFilter(false); }}
+            className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterZodiac === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white border border-[#f0e6d3] text-[#8d6e63]'}`}>
+            Todos
+          </button>
+          {ZODIAC_ANIMALS.map(a => {
+            const count = personas.filter(p => getChineseZodiac(p.fecha_nacimiento).name === a.name).length;
+            return (
+              <button key={a.name} onClick={() => { setFilterZodiac(a.name); setShowZodiacFilter(false); }}
+                className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterZodiac === a.name ? 'bg-[#d4a843] text-white' : 'bg-white border border-[#f0e6d3] text-[#2d1f0e]'}`}>
+                {a.emoji} {a.name} {count > 0 && <span className="opacity-60">({count})</span>}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <div className="px-4 mt-4 space-y-3">
         {loading ? (
