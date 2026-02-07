@@ -637,6 +637,59 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
             })}
           </div>
         </div>
+
+        {/* Top 10 Rankings */}
+        {filtered.length >= 2 && (() => {
+          const pairs = [];
+          for (let i = 0; i < filtered.length; i++) {
+            for (let j = i + 1; j < filtered.length; j++) {
+              const c = calcCompatibility(filtered[i], filtered[j]);
+              pairs.push({ p1: filtered[i], p2: filtered[j], score: c.overall,
+                z1: getChineseZodiac(filtered[i].fecha_nacimiento),
+                z2: getChineseZodiac(filtered[j].fecha_nacimiento) });
+            }
+          }
+          const top = [...pairs].sort((a, b) => b.score - a.score).slice(0, 10);
+          const bottom = [...pairs].sort((a, b) => a.score - b.score).slice(0, 10);
+
+          const PairRow = ({ pair, rank }) => (
+            <div className="flex items-center gap-2 py-2">
+              <span className="text-xs text-[#c4a882] w-5 text-right shrink-0">{rank}</span>
+              <span className="text-lg shrink-0">{pair.z1.emoji}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-[#2d1f0e] truncate">{pair.p1.nombre} + {pair.p2.nombre}</p>
+              </div>
+              <span className="text-lg shrink-0">{pair.z2.emoji}</span>
+              <div className="w-12 text-right shrink-0">
+                <span className="text-sm font-bold" style={{
+                  color: pair.score >= 7 ? '#2e7d32' : pair.score >= 5 ? '#d4a843' : '#c62828'
+                }}>{pair.score}</span>
+              </div>
+            </div>
+          );
+
+          return (
+            <>
+              <div className="bg-white rounded-2xl p-5 card-glow">
+                <p className="text-sm font-semibold text-[#2d1f0e] mb-1">💚 Top 10 Afinidades</p>
+                <p className="text-xs text-[#c4a882] mb-3">Pares con mayor compatibilidad</p>
+                <div className="divide-y divide-[#f0e6d3]">
+                  {top.map((pair, i) => <PairRow key={`${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
+                </div>
+                {top.length === 0 && <p className="text-xs text-[#c4a882] text-center py-4">Agrega más personas para ver rankings</p>}
+              </div>
+
+              <div className="bg-white rounded-2xl p-5 card-glow">
+                <p className="text-sm font-semibold text-[#2d1f0e] mb-1">⚡ Top 10 Opuestos</p>
+                <p className="text-xs text-[#c4a882] mb-3">Pares que requieren más paciencia</p>
+                <div className="divide-y divide-[#f0e6d3]">
+                  {bottom.map((pair, i) => <PairRow key={`${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
+                </div>
+                {bottom.length === 0 && <p className="text-xs text-[#c4a882] text-center py-4">Agrega más personas para ver rankings</p>}
+              </div>
+            </>
+          );
+        })()}
           </>
         )}
       </div>
