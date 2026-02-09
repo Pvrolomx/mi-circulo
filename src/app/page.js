@@ -988,12 +988,12 @@ export default function Home() {
             className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterNumber === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white border border-[#f0e6d3] text-[#8d6e63]'}`}>
             Todos
           </button>
-          {[1,2,3,4,5,6,7,8,9].map(n => {
+          {[1,2,3,4,5,6,7,8,9,11,22,33].map(n => {
             const count = personas.filter(p => calcLifeNumber(p.fecha_nacimiento) === n).length;
             return (
               <button key={n} onClick={() => { setFilterNumber(String(n)); setShowNumberFilter(false); }}
-                className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterNumber === String(n) ? 'bg-[#7b1fa2] text-white' : 'bg-white border border-[#f0e6d3] text-[#2d1f0e]'}`}>
-                #{n} {count > 0 && <span className="opacity-60">({count})</span>}
+                className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterNumber === String(n) ? (n > 9 ? 'bg-[#d4a843] text-white' : 'bg-[#7b1fa2] text-white') : 'bg-white border border-[#f0e6d3] text-[#2d1f0e]'}`}>
+                {n > 9 ? '✨' : '#'}{n} {count > 0 && <span className="opacity-60">({count})</span>}
               </button>
             );
           })}
