@@ -4,13 +4,19 @@ import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseEleme
 import { getPersonas, addPersona, updatePersona, deletePersona, subscribeToChanges } from '@/lib/supabase';
 
 const CATEGORIES = [
-  { value: 'familia', label: '👨‍👩‍👧 Familia', color: '#c62828' },
-  { value: 'amigo', label: '💛 Amigo', color: '#f9a825' },
-  { value: 'cliente', label: '💼 Cliente', color: '#1565c0' },
-  { value: 'conocido', label: '👋 Conocido', color: '#2e7d32' },
-  { value: 'marca', label: '🏷️ Marca', color: '#7b1fa2' },
-  { value: 'pais', label: '🌎 País', color: '#00695c' },
-  { value: 'estado', label: '🏛️ Estado', color: '#0277bd' },
+  { value: 'familia', label: '👨‍👩‍👧 Familia', color: '#c62828', group: 'persona' },
+  { value: 'amigo', label: '💛 Amigo', color: '#f9a825', group: 'persona' },
+  { value: 'cliente', label: '💼 Cliente', color: '#1565c0', group: 'persona' },
+  { value: 'conocido', label: '👋 Conocido', color: '#2e7d32', group: 'persona' },
+  { value: 'marca', label: '🏷️ Marca', color: '#7b1fa2', group: 'marca' },
+  { value: 'pais', label: '🌎 País', color: '#00695c', group: 'pais' },
+  { value: 'estado', label: '🏛️ Estado', color: '#0277bd', group: 'pais' },
+];
+
+const GROUPS = [
+  { value: 'persona', label: '👤 Personas', color: '#c62828', cats: ['familia','amigo','cliente','conocido'] },
+  { value: 'marca', label: '🏷️ Marcas', color: '#7b1fa2', cats: ['marca'] },
+  { value: 'pais', label: '🌎 Países', color: '#00695c', cats: ['pais','estado'] },
 ];
 
 function PersonCard({ persona, onClick }) {
@@ -539,7 +545,10 @@ function NoteEditor({ currentNote, onSave, onCancel }) {
 function AffinityMap({ personas, onBack, onSelectPerson }) {
   const [filterCat, setFilterCat] = useState('all');
 
-  const filtered = filterCat === 'all' ? personas : personas.filter(p => p.categoria === filterCat);
+  const filtered = filterCat === 'all' ? personas : personas.filter(p => {
+    const g = GROUPS.find(gr => gr.value === filterCat);
+    return g ? g.cats.includes(p.categoria) : false;
+  });
 
   const personsByAnimal = {};
   filtered.forEach(p => {
@@ -577,12 +586,12 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
             className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${filterCat === 'all' ? 'bg-white text-[#2d1f0e] font-semibold' : 'bg-white/10 text-white/70'}`}>
             Todos ({personas.length})
           </button>
-          {CATEGORIES.map(c => {
-            const count = personas.filter(p => p.categoria === c.value).length;
+          {GROUPS.map(g => {
+            const count = personas.filter(p => g.cats.includes(p.categoria)).length;
             return (
-              <button key={c.value} onClick={() => setFilterCat(c.value)}
-                className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${filterCat === c.value ? 'bg-white text-[#2d1f0e] font-semibold' : 'bg-white/10 text-white/70'}`}>
-                {c.label.split(' ')[0]} {c.label.split(' ').slice(1).join(' ')} ({count})
+              <button key={g.value} onClick={() => setFilterCat(g.value)}
+                className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${filterCat === g.value ? 'bg-white text-[#2d1f0e] font-semibold' : 'bg-white/10 text-white/70'}`}>
+                {g.label} ({count})
               </button>
             );
           })}
@@ -713,11 +722,11 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
           const globalBottom = [...allPairs].sort((a, b) => a.score - b.score).slice(0, 10);
 
           // Per-category rankings
-          const catGroups = CATEGORIES.map(c => {
-            const catPersonas = filtered.filter(p => p.categoria === c.value);
+          const catGroups = GROUPS.map(g => {
+            const catPersonas = filtered.filter(p => g.cats.includes(p.categoria));
             if (catPersonas.length < 2) return null;
             const pairs = calcPairs(catPersonas);
-            return { cat: c, top: [...pairs].sort((a, b) => b.score - a.score).slice(0, 5),
+            return { cat: g, top: [...pairs].sort((a, b) => b.score - a.score).slice(0, 5),
               bottom: [...pairs].sort((a, b) => a.score - b.score).slice(0, 5) };
           }).filter(Boolean);
 
@@ -778,6 +787,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('all');
+  const [filterSubCat, setFilterSubCat] = useState('all');
   const [filterZodiac, setFilterZodiac] = useState('all');
   const [showZodiacFilter, setShowZodiacFilter] = useState(false);
   const [filterNumber, setFilterNumber] = useState('all');
@@ -876,10 +886,12 @@ export default function Home() {
 
   const filtered = personas.filter(p => {
     const matchSearch = !search || p.nombre.toLowerCase().includes(search.toLowerCase());
-    const matchCat = filterCat === 'all' || p.categoria === filterCat;
+    const activeGroup = GROUPS.find(g => g.value === filterCat);
+    const matchCat = filterCat === 'all' || (activeGroup ? activeGroup.cats.includes(p.categoria) : false);
+    const matchSubCat = filterSubCat === 'all' || p.categoria === filterSubCat;
     const matchZodiac = filterZodiac === 'all' || getChineseZodiac(p.fecha_nacimiento).name === filterZodiac;
     const matchNumber = filterNumber === 'all' || calcLifeNumber(p.fecha_nacimiento) === parseInt(filterNumber);
-    return matchSearch && matchCat && matchZodiac && matchNumber;
+    return matchSearch && matchCat && matchSubCat && matchZodiac && matchNumber;
   }).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
 
   if (view === 'profile' && selected) {
@@ -968,21 +980,44 @@ export default function Home() {
       </div>
 
       <div className="px-4 mt-4 flex gap-2 overflow-x-auto pb-2">
-        <button onClick={() => setFilterCat('all')}
+        <button onClick={() => { setFilterCat('all'); setFilterSubCat('all'); }}
           className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${filterCat === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
           Todos ({personas.length})
         </button>
-        {CATEGORIES.map(c => {
-          const count = personas.filter(p => p.categoria === c.value).length;
+        {GROUPS.map(g => {
+          const count = personas.filter(p => g.cats.includes(p.categoria)).length;
           return (
-            <button key={c.value} onClick={() => setFilterCat(c.value)}
-              className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${filterCat === c.value ? 'text-white' : 'bg-white border border-[#f0e6d3]'}`}
-              style={filterCat === c.value ? { background: c.color } : { color: c.color }}>
-              {c.label.split(' ')[0]} {c.label.split(' ').slice(1).join(' ')} ({count})
+            <button key={g.value} onClick={() => { setFilterCat(g.value); setFilterSubCat('all'); }}
+              className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${filterCat === g.value ? 'text-white' : 'bg-white border border-[#f0e6d3]'}`}
+              style={filterCat === g.value ? { background: g.color } : { color: g.color }}>
+              {g.label} ({count})
             </button>
           );
         })}
       </div>
+      {filterCat !== 'all' && (() => {
+        const activeGroup = GROUPS.find(g => g.value === filterCat);
+        if (!activeGroup || activeGroup.cats.length <= 1) return null;
+        const subCats = CATEGORIES.filter(c => activeGroup.cats.includes(c.value));
+        return (
+          <div className="px-4 mt-1 flex gap-1.5 overflow-x-auto pb-1">
+            <button onClick={() => setFilterSubCat('all')}
+              className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${filterSubCat === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
+              Todos
+            </button>
+            {subCats.map(c => {
+              const count = personas.filter(p => p.categoria === c.value).length;
+              return (
+                <button key={c.value} onClick={() => setFilterSubCat(c.value)}
+                  className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${filterSubCat === c.value ? 'text-white' : 'bg-white border border-[#f0e6d3]'}`}
+                  style={filterSubCat === c.value ? { background: c.color } : { color: c.color }}>
+                  {c.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {/* Zodiac filter */}
       <div className="px-4 mt-2 flex gap-2 flex-wrap">
