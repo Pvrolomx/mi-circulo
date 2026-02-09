@@ -7,7 +7,8 @@ const CATEGORIES = [
   { value: 'familia', label: '👨‍👩‍👧 Familia', color: '#c62828' },
   { value: 'amigo', label: '💛 Amigo', color: '#f9a825' },
   { value: 'cliente', label: '💼 Cliente', color: '#1565c0' },
-  { value: 'trabajo', label: '🏢 Trabajo', color: '#2e7d32' },
+  { value: 'conocido', label: '👋 Conocido', color: '#2e7d32' },
+  { value: 'marca', label: '🏷️ Marca', color: '#7b1fa2' },
 ];
 
 function PersonCard({ persona, onClick }) {
