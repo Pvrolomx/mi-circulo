@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES } from '@/lib/numerology';
-import { getPersonas, addPersona, updatePersona, deletePersona } from '@/lib/supabase';
+import { getPersonas, addPersona, updatePersona, deletePersona, subscribeToChanges } from '@/lib/supabase';
 
 const CATEGORIES = [
   { value: 'familia', label: '👨‍👩‍👧 Familia', color: '#c62828' },
@@ -744,6 +744,7 @@ export default function Home() {
   const [filterZodiac, setFilterZodiac] = useState('all');
   const [showZodiacFilter, setShowZodiacFilter] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     getPersonas().then(p => { setPersonas(p); setLoading(false); });
@@ -752,8 +753,36 @@ export default function Home() {
     }
     const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
     window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+
+    // Realtime: escuchar cambios de otro dispositivo
+    const unsubscribe = subscribeToChanges(
+      (newPersona) => {
+        setPersonas(prev => {
+          if (prev.some(p => p.id === newPersona.id)) return prev;
+          setToast({ type: 'add', nombre: newPersona.nombre });
+          return [newPersona, ...prev];
+        });
+      },
+      (oldPersona) => {
+        setPersonas(prev => {
+          const existed = prev.some(p => p.id === oldPersona.id);
+          if (existed) setToast({ type: 'del', nombre: oldPersona.nombre || '?' });
+          return prev.filter(p => p.id !== oldPersona.id);
+        });
+      }
+    );
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 3500);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const handleAdd = async (data) => {
     const p = await addPersona(data);
@@ -861,6 +890,24 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#faf5eb] pb-24">
+      {/* Toast notification */}
+      {toast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] animate-fade-in">
+          <div className="bg-[#2d1f0e] text-white px-5 py-3 rounded-2xl shadow-lg flex items-center gap-2 text-sm"
+            style={{ animation: 'toastSlide 3.5s ease-in-out' }}>
+            <span>{toast.type === 'add' ? '✨' : '👋'}</span>
+            <span>{toast.type === 'add' ? `${toast.nombre} se unió al círculo` : `${toast.nombre} fue eliminado`}</span>
+          </div>
+        </div>
+      )}
+      <style jsx>{`
+        @keyframes toastSlide {
+          0% { opacity: 0; transform: translateY(-10px); }
+          8% { opacity: 1; transform: translateY(0); }
+          85% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-10px); }
+        }
+      `}</style>
       <div className="gradient-mystic text-white p-6 pb-8 rounded-b-3xl">
         <div className="flex items-center justify-between mb-4">
           <div>
