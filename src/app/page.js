@@ -10,6 +10,7 @@ const CATEGORIES = [
   { value: 'conocido', label: '👋 Conocido', color: '#2e7d32' },
   { value: 'marca', label: '🏷️ Marca', color: '#7b1fa2' },
   { value: 'pais', label: '🌎 País', color: '#00695c' },
+  { value: 'estado', label: '🏛️ Estado', color: '#0277bd' },
 ];
 
 function PersonCard({ persona, onClick }) {
