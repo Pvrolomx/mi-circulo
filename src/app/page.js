@@ -752,6 +752,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('all');
+  const [filterSubCat, setFilterSubCat] = useState('all');
   const [filterZodiac, setFilterZodiac] = useState('all');
   const [showZodiacFilter, setShowZodiacFilter] = useState(false);
   const [filterNumber, setFilterNumber] = useState('all');
@@ -851,10 +852,11 @@ export default function Home() {
   const filtered = personas.filter(p => {
     const matchSearch = !search || p.nombre.toLowerCase().includes(search.toLowerCase());
     const activeGroup = GROUPS.find(g => g.value === filterCat);
-    const matchCat = filterCat === 'all' || (activeGroup ? activeGroup.cats.includes(p.categoria) : p.categoria === filterCat);
+    const matchCat = filterCat === 'all' || (activeGroup ? activeGroup.cats.includes(p.categoria) : false);
+    const matchSubCat = filterSubCat === 'all' || p.categoria === filterSubCat;
     const matchZodiac = filterZodiac === 'all' || getChineseZodiac(p.fecha_nacimiento).name === filterZodiac;
     const matchNumber = filterNumber === 'all' || calcLifeNumber(p.fecha_nacimiento) === parseInt(filterNumber);
-    return matchSearch && matchCat && matchZodiac && matchNumber;
+    return matchSearch && matchCat && matchSubCat && matchZodiac && matchNumber;
   }).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
 
   if (view === 'profile' && selected) {
@@ -943,14 +945,14 @@ export default function Home() {
       </div>
 
       <div className="px-4 mt-4 flex gap-2 overflow-x-auto pb-2">
-        <button onClick={() => setFilterCat('all')}
+        <button onClick={() => { setFilterCat('all'); setFilterSubCat('all'); }}
           className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${filterCat === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
           Todos ({personas.length})
         </button>
         {GROUPS.map(g => {
           const count = personas.filter(p => g.cats.includes(p.categoria)).length;
           return (
-            <button key={g.value} onClick={() => setFilterCat(g.value)}
+            <button key={g.value} onClick={() => { setFilterCat(g.value); setFilterSubCat('all'); }}
               className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${filterCat === g.value ? 'text-white' : 'bg-white border border-[#f0e6d3]'}`}
               style={filterCat === g.value ? { background: g.color } : { color: g.color }}>
               {g.label} ({count})
@@ -958,6 +960,29 @@ export default function Home() {
           );
         })}
       </div>
+      {filterCat !== 'all' && (() => {
+        const activeGroup = GROUPS.find(g => g.value === filterCat);
+        if (!activeGroup || activeGroup.cats.length <= 1) return null;
+        const subCats = CATEGORIES.filter(c => activeGroup.cats.includes(c.value));
+        return (
+          <div className="px-4 mt-1 flex gap-1.5 overflow-x-auto pb-1">
+            <button onClick={() => setFilterSubCat('all')}
+              className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${filterSubCat === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
+              Todos
+            </button>
+            {subCats.map(c => {
+              const count = personas.filter(p => p.categoria === c.value).length;
+              return (
+                <button key={c.value} onClick={() => setFilterSubCat(c.value)}
+                  className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${filterSubCat === c.value ? 'text-white' : 'bg-white border border-[#f0e6d3]'}`}
+                  style={filterSubCat === c.value ? { background: c.color } : { color: c.color }}>
+                  {c.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {/* Zodiac filter */}
       <div className="px-4 mt-2 flex gap-2 flex-wrap">
