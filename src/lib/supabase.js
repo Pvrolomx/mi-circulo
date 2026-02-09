@@ -110,3 +110,17 @@ export async function deletePersona(id) {
     return true;
   } catch { return true; }
 }
+
+export function subscribeToChanges(onInsert, onDelete) {
+  if (!supabase) return null;
+  const channel = supabase
+    .channel('mi_circulo_changes')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mi_circulo' }, (payload) => {
+      if (onInsert) onInsert(payload.new);
+    })
+    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'mi_circulo' }, (payload) => {
+      if (onDelete) onDelete(payload.old);
+    })
+    .subscribe();
+  return () => supabase.removeChannel(channel);
+}
