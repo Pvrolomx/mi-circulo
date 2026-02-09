@@ -744,6 +744,8 @@ export default function Home() {
   const [filterCat, setFilterCat] = useState('all');
   const [filterZodiac, setFilterZodiac] = useState('all');
   const [showZodiacFilter, setShowZodiacFilter] = useState(false);
+  const [filterNumber, setFilterNumber] = useState('all');
+  const [showNumberFilter, setShowNumberFilter] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [toast, setToast] = useState(null);
 
@@ -840,7 +842,8 @@ export default function Home() {
     const matchSearch = !search || p.nombre.toLowerCase().includes(search.toLowerCase());
     const matchCat = filterCat === 'all' || p.categoria === filterCat;
     const matchZodiac = filterZodiac === 'all' || getChineseZodiac(p.fecha_nacimiento).name === filterZodiac;
-    return matchSearch && matchCat && matchZodiac;
+    const matchNumber = filterNumber === 'all' || calcLifeNumber(p.fecha_nacimiento) === parseInt(filterNumber);
+    return matchSearch && matchCat && matchZodiac && matchNumber;
   }).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
 
   if (view === 'profile' && selected) {
@@ -947,9 +950,13 @@ export default function Home() {
 
       {/* Zodiac filter */}
       <div className="px-4 mt-2 flex gap-2 flex-wrap">
-        <button onClick={() => setShowZodiacFilter(!showZodiacFilter)}
+        <button onClick={() => { setShowZodiacFilter(!showZodiacFilter); setShowNumberFilter(false); }}
           className={`px-4 py-1.5 rounded-full text-sm transition-all ${filterZodiac !== 'all' ? 'bg-[#d4a843] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
           {filterZodiac !== 'all' ? `${ZODIAC_ANIMALS.find(a => a.name === filterZodiac)?.emoji} ${filterZodiac}` : '🐲 Filtrar por signo'} {showZodiacFilter ? '▲' : '▼'}
+        </button>
+        <button onClick={() => { setShowNumberFilter(!showNumberFilter); setShowZodiacFilter(false); }}
+          className={`px-4 py-1.5 rounded-full text-sm transition-all ${filterNumber !== 'all' ? 'bg-[#7b1fa2] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
+          {filterNumber !== 'all' ? `#${filterNumber}` : '🔢 Filtrar por número'} {showNumberFilter ? '▲' : '▼'}
         </button>
         {personas.length >= 2 && (
           <button onClick={() => setView('affinity')}
@@ -970,6 +977,23 @@ export default function Home() {
               <button key={a.name} onClick={() => { setFilterZodiac(a.name); setShowZodiacFilter(false); }}
                 className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterZodiac === a.name ? 'bg-[#d4a843] text-white' : 'bg-white border border-[#f0e6d3] text-[#2d1f0e]'}`}>
                 {a.emoji} {a.name} {count > 0 && <span className="opacity-60">({count})</span>}
+              </button>
+            );
+          })}
+        </div>
+      )}
+      {showNumberFilter && (
+        <div className="px-4 mt-2 grid grid-cols-5 gap-1.5">
+          <button onClick={() => { setFilterNumber('all'); setShowNumberFilter(false); }}
+            className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterNumber === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white border border-[#f0e6d3] text-[#8d6e63]'}`}>
+            Todos
+          </button>
+          {[1,2,3,4,5,6,7,8,9].map(n => {
+            const count = personas.filter(p => calcLifeNumber(p.fecha_nacimiento) === n).length;
+            return (
+              <button key={n} onClick={() => { setFilterNumber(String(n)); setShowNumberFilter(false); }}
+                className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterNumber === String(n) ? 'bg-[#7b1fa2] text-white' : 'bg-white border border-[#f0e6d3] text-[#2d1f0e]'}`}>
+                #{n} {count > 0 && <span className="opacity-60">({count})</span>}
               </button>
             );
           })}
