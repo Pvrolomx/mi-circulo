@@ -9,14 +9,15 @@ const CATEGORIES = [
   { value: 'cliente', label: '💼 Cliente', color: '#1565c0', group: 'persona' },
   { value: 'conocido', label: '👋 Conocido', color: '#2e7d32', group: 'persona' },
   { value: 'marca', label: '🏷️ Marca', color: '#7b1fa2', group: 'marca' },
-  { value: 'equipo', label: '⚽ Equipo', color: '#388e3c', group: 'marca' },
+  { value: 'equipo', label: '⚽ Equipo', color: '#388e3c', group: 'equipo' },
   { value: 'pais', label: '🌎 País', color: '#00695c', group: 'pais' },
   { value: 'estado', label: '🏛️ Estado', color: '#0277bd', group: 'pais' },
 ];
 
 const GROUPS = [
   { value: 'persona', label: '👤 Personas', color: '#c62828', cats: ['familia','amigo','cliente','conocido'] },
-  { value: 'marca', label: '🏷️ Marcas', color: '#7b1fa2', cats: ['marca','equipo'] },
+  { value: 'marca', label: '🏷️ Marcas', color: '#7b1fa2', cats: ['marca'] },
+  { value: 'equipo', label: '⚽ Equipos', color: '#388e3c', cats: ['equipo'] },
   { value: 'pais', label: '🌎 Países', color: '#00695c', cats: ['pais','estado'] },
 ];
 
@@ -1100,3 +1101,4 @@ export default function Home() {
     </div>
   );
 }
+
