@@ -134,7 +134,6 @@ function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
 }
 
 function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota, onEdit, allPersonas }) {
-  const [relFilter, setRelFilter] = useState('all');
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const element = getChineseElement(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
@@ -151,19 +150,6 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
   const allies = getAllies(zodiac.name);
   const enemy = getEnemy(zodiac.name);
   const relationships = allPersonas ? matchRelationships(persona, allPersonas) : null;
-
-  // Filtrar personas en relaciones por categoría seleccionada
-  const filterPeople = (people) => {
-    if (relFilter === 'all') return people;
-    const group = GROUPS.find(g => g.value === relFilter);
-    if (group) return people.filter(p => group.cats.includes(p.categoria));
-    return people.filter(p => p.categoria === relFilter);
-  };
-
-  const filteredRelationships = relationships ? {
-    allies: relationships.allies.map(a => ({ ...a, people: filterPeople(a.people) })),
-    enemy: { ...relationships.enemy, people: filterPeople(relationships.enemy.people) },
-  } : null;
 
   return (
     <div className="min-h-screen bg-[#faf5eb]">
@@ -293,22 +279,6 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
         {/* Aliados y Enemigos */}
         <div className="bg-white rounded-2xl p-5 card-glow">
           <p className="text-sm text-[#8d6e63] mb-3">Aliados y Opuestos</p>
-
-          {/* Filtro por categoría */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            <button
-              onClick={() => setRelFilter('all')}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${relFilter === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-[#faf5eb] text-[#8d6e63] hover:bg-[#f0e6d6]'}`}
-            >Todos</button>
-            {GROUPS.map(g => (
-              <button key={g.value}
-                onClick={() => setRelFilter(g.value)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${relFilter === g.value ? 'text-white' : 'bg-[#faf5eb] text-[#8d6e63] hover:bg-[#f0e6d6]'}`}
-                style={relFilter === g.value ? { backgroundColor: g.color } : {}}
-              >{g.label}</button>
-            ))}
-          </div>
-
           <div className="space-y-3">
             <div>
               <p className="text-xs text-[#c4a882] mb-1.5">🤝 Aliados (triángulo de afinidad)</p>
@@ -322,15 +292,12 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                   );
                 })}
               </div>
-              {filteredRelationships && filteredRelationships.allies.some(a => a.people.length > 0) && (
+              {relationships && relationships.allies.some(a => a.people.length > 0) && (
                 <div className="mt-2 text-xs text-[#2e7d32]">
-                  {filteredRelationships.allies.filter(a => a.people.length > 0).map(a => (
+                  {relationships.allies.filter(a => a.people.length > 0).map(a => (
                     <span key={a.animal}>{a.emoji} {a.people.map(p => p.nombre).join(', ')} · </span>
                   ))}
                 </div>
-              )}
-              {filteredRelationships && filteredRelationships.allies.every(a => a.people.length === 0) && relFilter !== 'all' && (
-                <p className="mt-2 text-xs text-[#c4a882] italic">Sin aliados en esta categoría</p>
               )}
             </div>
             {enemy && (
@@ -339,13 +306,10 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                 <span className="px-3 py-1.5 rounded-full bg-red-50 text-red-700 text-sm">
                   {ZODIAC_ANIMALS.find(z => z.name === enemy)?.emoji} {enemy}
                 </span>
-                {filteredRelationships && filteredRelationships.enemy.people.length > 0 && (
+                {relationships && relationships.enemy.people.length > 0 && (
                   <p className="mt-2 text-xs text-[#c62828]">
-                    {filteredRelationships.enemy.people.map(p => p.nombre).join(', ')}
+                    {relationships.enemy.people.map(p => p.nombre).join(', ')}
                   </p>
-                )}
-                {filteredRelationships && filteredRelationships.enemy.people.length === 0 && relFilter !== 'all' && (
-                  <p className="mt-2 text-xs text-[#c4a882] italic">Sin opuestos en esta categoría</p>
                 )}
               </div>
             )}
