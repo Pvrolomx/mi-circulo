@@ -134,7 +134,7 @@ function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
 }
 
 function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota, onEdit, allPersonas }) {
-  const [relFilter, setRelFilter] = useState('all');
+  const [relFilter, setRelFilter] = useState('persona');
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const element = getChineseElement(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
@@ -296,10 +296,6 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 
           {/* Filtro por categoría */}
           <div className="flex flex-wrap gap-1.5 mb-4">
-            <button
-              onClick={() => setRelFilter('all')}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${relFilter === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-[#faf5eb] text-[#8d6e63] hover:bg-[#f0e6d6]'}`}
-            >Todos</button>
             {GROUPS.map(g => (
               <button key={g.value}
                 onClick={() => setRelFilter(g.value)}
@@ -307,6 +303,10 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                 style={relFilter === g.value ? { backgroundColor: g.color } : {}}
               >{g.label}</button>
             ))}
+            <button
+              onClick={() => setRelFilter('all')}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${relFilter === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-[#faf5eb] text-[#8d6e63] hover:bg-[#f0e6d6]'}`}
+            >Todos</button>
           </div>
 
           <div className="space-y-3">
