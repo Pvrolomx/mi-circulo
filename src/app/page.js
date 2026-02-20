@@ -362,7 +362,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           if (filtered.length === 0) return null;
           const scored = filtered.map(p => ({
             ...p,
-            score: calcFullCompatibility(persona, p).overall
+            score: calcCompatibility(persona, p).overall,
+            fullScore: calcFullCompatibility(persona, p)
           })).sort((a, b) => b.score - a.score);
           const top5 = scored.slice(0, 5);
           const bottom5 = scored.slice(-5).reverse();
@@ -375,14 +376,26 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                     {top5.map((p, i) => {
                       const z = getChineseZodiac(p.fecha_nacimiento);
                       return (
-                        <div key={p.id} className="flex items-center justify-between px-3 py-2 rounded-xl bg-green-50">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-green-700">{i + 1}</span>
-                            <span className="text-sm">{z.emoji}</span>
-                            <span className="text-sm text-[#2d1f0e]">{p.nombre}</span>
+                        <details key={p.id} className="group">
+                          <summary className="flex items-center justify-between px-3 py-2 rounded-xl bg-green-50 cursor-pointer list-none">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-green-700">{i + 1}</span>
+                              <span className="text-sm">{z.emoji}</span>
+                              <span className="text-sm text-[#2d1f0e]">{p.nombre}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-green-700">{p.score}</span>
+                              <span className="text-xs text-[#c4a882] group-open:rotate-180 transition-transform">▼</span>
+                            </div>
+                          </summary>
+                          <div className="mt-1 mx-1 px-3 py-2 rounded-lg bg-[#faf5eb] text-xs text-[#8d6e63] grid grid-cols-2 gap-1">
+                            <span>🐲 Chino: {p.fullScore.chinese.score}</span>
+                            <span>♈ Occidental: {p.fullScore.western.score}</span>
+                            <span>🪷 Védico: {p.fullScore.vedic.score}</span>
+                            <span>🔢 Numerología: {p.fullScore.numerology.score}</span>
+                            <span className="col-span-2 text-[#c4a882] mt-1">Ponderado 4 tradiciones: {p.fullScore.overall.toFixed(1)}</span>
                           </div>
-                          <span className="text-sm font-bold text-green-700">{p.score.toFixed(1)}</span>
-                        </div>
+                        </details>
                       );
                     })}
                   </div>
@@ -393,14 +406,26 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                     {bottom5.map((p, i) => {
                       const z = getChineseZodiac(p.fecha_nacimiento);
                       return (
-                        <div key={p.id} className="flex items-center justify-between px-3 py-2 rounded-xl bg-red-50">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-red-700">{scored.length - 4 + i}</span>
-                            <span className="text-sm">{z.emoji}</span>
-                            <span className="text-sm text-[#2d1f0e]">{p.nombre}</span>
+                        <details key={p.id} className="group">
+                          <summary className="flex items-center justify-between px-3 py-2 rounded-xl bg-red-50 cursor-pointer list-none">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-red-700">{scored.length - 4 + i}</span>
+                              <span className="text-sm">{z.emoji}</span>
+                              <span className="text-sm text-[#2d1f0e]">{p.nombre}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-red-700">{p.score}</span>
+                              <span className="text-xs text-[#c4a882] group-open:rotate-180 transition-transform">▼</span>
+                            </div>
+                          </summary>
+                          <div className="mt-1 mx-1 px-3 py-2 rounded-lg bg-[#faf5eb] text-xs text-[#8d6e63] grid grid-cols-2 gap-1">
+                            <span>🐲 Chino: {p.fullScore.chinese.score}</span>
+                            <span>♈ Occidental: {p.fullScore.western.score}</span>
+                            <span>🪷 Védico: {p.fullScore.vedic.score}</span>
+                            <span>🔢 Numerología: {p.fullScore.numerology.score}</span>
+                            <span className="col-span-2 text-[#c4a882] mt-1">Ponderado 4 tradiciones: {p.fullScore.overall.toFixed(1)}</span>
                           </div>
-                          <span className="text-sm font-bold text-red-700">{p.score.toFixed(1)}</span>
-                        </div>
+                        </details>
                       );
                     })}
                   </div>
