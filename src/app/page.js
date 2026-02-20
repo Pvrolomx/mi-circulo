@@ -352,6 +352,64 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           </div>
         </div>
 
+        {/* Top 5 Afinidad & Bottom 5 Opuestos */}
+        {allPersonas && allPersonas.length > 1 && (() => {
+          const others = allPersonas.filter(p => p.id !== persona.id);
+          const filtered = relFilter === 'all' ? others : (() => {
+            const group = GROUPS.find(g => g.value === relFilter);
+            return group ? others.filter(p => group.cats.includes(p.categoria)) : others;
+          })();
+          if (filtered.length === 0) return null;
+          const scored = filtered.map(p => ({
+            ...p,
+            score: calcFullCompatibility(persona, p).overall
+          })).sort((a, b) => b.score - a.score);
+          const top5 = scored.slice(0, 5);
+          const bottom5 = scored.slice(-5).reverse();
+          return (
+            <div className="bg-white rounded-2xl p-5 card-glow">
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs text-[#c4a882] mb-2">🏆 Top 5 — Mayor afinidad</p>
+                  <div className="space-y-1.5">
+                    {top5.map((p, i) => {
+                      const z = getChineseZodiac(p.fecha_nacimiento);
+                      return (
+                        <div key={p.id} className="flex items-center justify-between px-3 py-2 rounded-xl bg-green-50">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-green-700">{i + 1}</span>
+                            <span className="text-sm">{z.emoji}</span>
+                            <span className="text-sm text-[#2d1f0e]">{p.nombre}</span>
+                          </div>
+                          <span className="text-sm font-bold text-green-700">{p.score.toFixed(1)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-[#c4a882] mb-2">⚡ Bottom 5 — Menor afinidad</p>
+                  <div className="space-y-1.5">
+                    {bottom5.map((p, i) => {
+                      const z = getChineseZodiac(p.fecha_nacimiento);
+                      return (
+                        <div key={p.id} className="flex items-center justify-between px-3 py-2 rounded-xl bg-red-50">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-red-700">{scored.length - 4 + i}</span>
+                            <span className="text-sm">{z.emoji}</span>
+                            <span className="text-sm text-[#2d1f0e]">{p.nombre}</span>
+                          </div>
+                          <span className="text-sm font-bold text-red-700">{p.score.toFixed(1)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         <button onClick={onCompare}
           className="w-full py-4 rounded-2xl gradient-mystic text-white font-semibold text-lg hover:opacity-90 transition-all">
           🔮 Comparar con...
