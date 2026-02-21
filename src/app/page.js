@@ -584,7 +584,7 @@ function CompareView({ person1, person2, onBack }) {
 }
 
 function CompareSelector({ personas, current, onSelect, onCancel }) {
-  const [compareGroup, setCompareGroup] = useState('all');
+  const [compareGroup, setCompareGroup] = useState('persona');
   const [compareSearch, setCompareSearch] = useState('');
   const others = personas.filter(p => {
     if (p.id === current.id) return false;
@@ -600,10 +600,6 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
       <div className="bg-[#faf5eb] w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 max-h-[80vh] flex flex-col">
         <h2 className="text-xl font-bold text-[#2d1f0e] mb-3">Comparar {current.nombre} con...</h2>
         <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1">
-          <button onClick={() => setCompareGroup('all')}
-            className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${compareGroup === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
-            Todos
-          </button>
           {GROUPS.map(g => {
             const count = personas.filter(p => p.id !== current.id && g.cats.includes(p.categoria)).length;
             return (
@@ -614,6 +610,10 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
               </button>
             );
           })}
+          <button onClick={() => setCompareGroup('all')}
+            className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${compareGroup === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
+            Todos
+          </button>
         </div>
         <input type="text" value={compareSearch} onChange={e => setCompareSearch(e.target.value)}
           className="w-full px-4 py-2 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e] text-sm mb-3"
