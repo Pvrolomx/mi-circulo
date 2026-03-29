@@ -389,15 +389,15 @@ export function calcFullCompatibility(person1, person2) {
 // ═══ KAIROS FLOW — 9 Posiciones Numerológicas ═══
 
 const KAIROS_POSITIONS = [
-  { pos: 1, name: 'La Máscara', desc: 'Cómo apareces', emoji: '🎭' },
-  { pos: 2, name: 'El Corazón', desc: 'Deseos internos', emoji: '❤️' },
-  { pos: 3, name: 'El Don', desc: 'Talento natural', emoji: '🎁' },
-  { pos: 4, name: 'La Herramienta', desc: 'Carrera / Acción', emoji: '🔧' },
-  { pos: 5, name: 'El Alma', desc: 'Esencia core', emoji: '✨' },
-  { pos: 6, name: 'El Camino', desc: 'Caminar diario', emoji: '🛤️' },
-  { pos: 7, name: 'El Llamado', desc: 'Meta de vida', emoji: '📯' },
+  { pos: 1, name: 'El Origen', desc: 'Talento innato', emoji: '🌱' },
+  { pos: 2, name: 'El Impulsor', desc: 'Motivación', emoji: '🔥' },
+  { pos: 3, name: 'El Puente', desc: 'Crecimiento', emoji: '🌉' },
+  { pos: 4, name: 'La Corona', desc: 'Propósito', emoji: '👑' },
+  { pos: 5, name: 'El Ancla', desc: 'Estabilidad', emoji: '⚓' },
+  { pos: 6, name: 'El Catalizador', desc: 'Cambio', emoji: '⚡' },
+  { pos: 7, name: 'La Expresión', desc: 'Imagen', emoji: '🪞' },
   { pos: 8, name: 'La Sombra', desc: 'Reto oculto', emoji: '🌑' },
-  { pos: 9, name: 'El Legado', desc: 'Resultado final', emoji: '👑' },
+  { pos: 9, name: 'La Cosecha', desc: 'Resultado final', emoji: '🌾' },
 ];
 
 const KAIROS_MEANINGS = {
@@ -563,20 +563,20 @@ function calcKairosFlow(fechaNacimiento) {
   const day = d.getDate();
   const month = d.getMonth() + 1;
   const year = d.getFullYear();
-  const last2 = year % 100;
-  const yearDigitSum = String(year).split('').reduce((a, c) => a + Number(c), 0);
+  const yearRaw = String(year).split('').reduce((a, c) => a + Number(c), 0);
+  const yearRed = reduceMaster(yearRaw);
 
-  const mask = reduceMaster(day);
-  const heart = reduceMaster(month);
-  const gift = reduceMaster(day + month);
-  const tool = reduceMaster(digitSumMaster(last2));
-  const soul = reduceMaster(yearDigitSum);
-  const path = reduceMaster(heart + yearDigitSum);
-  const calling = reduceMaster(mask + heart + yearDigitSum);
-  const shadow = reduceMaster(day + yearDigitSum);
-  const legacy = reduceMaster(mask + heart + gift + tool + soul + path + calling + shadow);
+  const origen = reduceMaster(month);                        // Pos 1: Mes
+  const impulsor = reduceMaster(day);                        // Pos 2: Día
+  const puente = yearRed;                                     // Pos 3: Año reducido
+  const corona = reduceMaster(origen + impulsor + puente);    // Pos 4: Suma total DOB
+  const ancla = reduceMaster(day + month);                    // Pos 5: Día + Mes
+  const catalizador = reduceMaster(day + yearRaw);            // Pos 6: Día + Año raw
+  const expresion = reduceMaster(ancla + catalizador);        // Pos 7: Ancla + Catalizador
+  const sombra = reduceMaster(Math.abs(origen - puente));     // Pos 8: Diferencia
+  const cosecha = reduceMaster(corona + puente);              // Pos 9: Corona + Puente
 
-  return [mask, heart, gift, tool, soul, path, calling, shadow, legacy].map((val, i) => ({
+  return [origen, impulsor, puente, corona, ancla, catalizador, expresion, sombra, cosecha].map((val, i) => ({
     ...KAIROS_POSITIONS[i],
     value: val,
     isMaster: val === 11 || val === 22 || val === 33,
