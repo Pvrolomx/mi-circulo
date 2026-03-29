@@ -453,5 +453,70 @@ function calcKairosFlow(fechaNacimiento) {
   }));
 }
 
-export { ZODIAC_ANIMALS, ELEMENTS, LIFE_NUMBER_MEANINGS, WESTERN_SIGNS, AFFINITY_TRIANGLES, OPPOSITES, KAIROS_POSITIONS, KAIROS_MEANINGS, calcKairosFlow };
+// ═══ KAIROS MASTER EDITION — Interpretación vibracional ═══
+
+const KAIROS_POSITIONS_MASTER = [
+  { pos: 1, name: 'La Máscara', desc: 'Tu impacto externo', emoji: '🎭' },
+  { pos: 2, name: 'El Corazón', desc: 'Lo que tu alma anhela', emoji: '❤️' },
+  { pos: 3, name: 'El Don', desc: 'Tu superpoder innato', emoji: '🎁' },
+  { pos: 4, name: 'La Herramienta', desc: 'Tu método de trabajo', emoji: '🔧' },
+  { pos: 5, name: 'El Alma', desc: 'Centro de gravedad', emoji: '✨' },
+  { pos: 6, name: 'El Camino', desc: 'Tu estilo de vida', emoji: '🛤️' },
+  { pos: 7, name: 'El Llamado', desc: 'Misión espiritual', emoji: '📯' },
+  { pos: 8, name: 'La Sombra', desc: 'Apego emocional', emoji: '🌑' },
+  { pos: 9, name: 'El Legado', desc: 'Liberación final', emoji: '👑' },
+];
+
+function calcKairosFlowMaster(fechaNacimiento) {
+  const d = new Date(fechaNacimiento + 'T12:00:00');
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+  const year = d.getFullYear();
+  const last2 = year % 100;
+  const yearDigitSum = String(year).split('').reduce((a, c) => a + Number(c), 0);
+
+  const mask = reduceMaster(day);
+  const heart = reduceMaster(month);
+  const gift = reduceMaster(day + month);
+  const tool = reduceMaster(digitSumMaster(last2));
+  const soul = reduceMaster(yearDigitSum);
+  const path = reduceMaster(heart + yearDigitSum);
+  const calling = reduceMaster(mask + heart + yearDigitSum);
+  const shadow = reduceMaster(day + yearDigitSum);
+  const legacy = reduceMaster(mask + heart + gift + tool + soul + path + calling + shadow);
+
+  return [mask, heart, gift, tool, soul, path, calling, shadow, legacy].map((val, i) => ({
+    ...KAIROS_POSITIONS_MASTER[i],
+    value: val,
+    isMaster: val === 11 || val === 22 || val === 33,
+  }));
+}
+
+// ═══ AÑO PERSONAL — Ciclo de 9 años ═══
+
+const PERSONAL_YEAR_MEANINGS = {
+  1: { title: 'La Semilla', desc: 'Nuevos comienzos, identidad, fuerza de voluntad' },
+  2: { title: 'La Conexión', desc: 'Cooperación, paciencia, relaciones, diplomacia' },
+  3: { title: 'La Expresión', desc: 'Creatividad, comunicación, alegría, expansión social' },
+  4: { title: 'Los Cimientos', desc: 'Trabajo duro, estructura, disciplina, bases sólidas' },
+  5: { title: 'El Cambio', desc: 'Libertad, aventura, transformación, adaptabilidad' },
+  6: { title: 'El Hogar', desc: 'Responsabilidad, familia, amor, servicio, armonía' },
+  7: { title: 'La Introspección', desc: 'Análisis, espiritualidad, soledad productiva, verdad' },
+  8: { title: 'El Poder', desc: 'Abundancia, logros materiales, autoridad, cosecha' },
+  9: { title: 'La Conclusión', desc: 'Cierre de ciclos, soltar, sabiduría, humanitarismo' },
+  11: { title: 'Despertar', desc: 'Iluminación, intuición amplificada, año de visiones' },
+  22: { title: 'Construcción Maestra', desc: 'Manifestar lo imposible, arquitectura de legado' },
+  33: { title: 'Servicio Supremo', desc: 'Guía espiritual, amor incondicional, elevación colectiva' },
+};
+
+function calcPersonalYear(fechaNacimiento, currentYear) {
+  const d = new Date(fechaNacimiento + 'T12:00:00');
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+  const yearSum = String(currentYear).split('').reduce((a, c) => a + Number(c), 0);
+  const total = reduceMaster(day) + reduceMaster(month) + reduceMaster(yearSum);
+  return reduceMaster(total);
+}
+
+export { ZODIAC_ANIMALS, ELEMENTS, LIFE_NUMBER_MEANINGS, WESTERN_SIGNS, AFFINITY_TRIANGLES, OPPOSITES, KAIROS_POSITIONS, KAIROS_POSITIONS_MASTER, KAIROS_MEANINGS, calcKairosFlow, calcKairosFlowMaster, PERSONAL_YEAR_MEANINGS, calcPersonalYear };
 
