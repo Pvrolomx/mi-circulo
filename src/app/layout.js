@@ -1,4 +1,5 @@
 import './globals.css'
+import { ClientProviders } from '@/lib/providers'
 
 export const metadata = {
   title: 'Mi Círculo — Numerología y Zodiaco Chino',
@@ -18,8 +19,9 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="min-h-screen bg-[#faf5eb]">
-        {children}
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   )
 }
+
