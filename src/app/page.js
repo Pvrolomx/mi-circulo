@@ -531,21 +531,41 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                   })}
                 </div>
                 {/* Año Personal */}
-                <div className="mt-3 px-3 py-2.5 rounded-xl bg-white/10 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">🔄</span>
-                    <div>
-                      <div className="text-xs font-semibold text-white">{lang === 'en' ? 'Personal Year' : 'Año Personal'} {currentYear}</div>
-                      <div className="text-[10px] text-white/50">{pyMeaning ? tData(pyMeaning.desc) : ''}</div>
+                <details className="mt-3 rounded-xl bg-white/10">
+                  <summary className="px-3 py-2.5 cursor-pointer flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">🔄</span>
+                      <div>
+                        <div className="text-xs font-semibold text-white">{lang === 'en' ? 'Personal Year' : 'Año Personal'} {currentYear}</div>
+                        <div className="text-[10px] text-white/50">{pyMeaning ? tData(pyMeaning.desc) : ''}</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <span className={`text-lg font-black ${personalYear > 9 ? 'text-amber-300' : 'text-white/90'}`}>
-                      {personalYear > 9 ? `☆${personalYear}` : personalYear}
-                    </span>
-                    <div className="text-[10px] text-amber-200/60">{pyMeaning ? tData(pyMeaning.title) : ''}</div>
-                  </div>
-                </div>
+                    <div className="text-right">
+                      <span className={`text-lg font-black ${personalYear > 9 ? 'text-amber-300' : 'text-white/90'}`}>
+                        {personalYear > 9 ? `☆${personalYear}` : personalYear}
+                      </span>
+                      <div className="text-[10px] text-amber-200/60">{pyMeaning ? tData(pyMeaning.title) : ''}</div>
+                    </div>
+                  </summary>
+                  {pyMeaning && (
+                    <div className="px-3 pb-3 pt-1 border-t border-white/10 mx-2 mb-1">
+                      <div className={`text-sm font-bold mb-2 ${personalYear > 9 ? 'text-amber-300' : 'text-white/90'}`}>
+                        {tData(pyMeaning.title)}
+                      </div>
+                      <div className="text-xs text-white/80 leading-relaxed mb-3">{pyMeaning.reading}</div>
+                      <div className="space-y-2">
+                        <div className="px-3 py-2 rounded-lg bg-green-500/10 border border-green-400/20">
+                          <div className="text-[10px] font-semibold text-green-300 mb-1">✅ {lang === 'en' ? 'What to do' : 'Qué hacer'}</div>
+                          <div className="text-xs text-white/70 leading-relaxed">{pyMeaning.hacer}</div>
+                        </div>
+                        <div className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-400/20">
+                          <div className="text-[10px] font-semibold text-red-300 mb-1">⚠️ {lang === 'en' ? 'What to avoid' : 'Qué evitar'}</div>
+                          <div className="text-xs text-white/70 leading-relaxed">{pyMeaning.evitar}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </details>
                 <div className="mt-3 text-center text-[10px] text-white/30">
                   {t('kairos_footer')}
                 </div>
