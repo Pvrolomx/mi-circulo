@@ -143,6 +143,7 @@ function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
 }
 
 function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota, onEdit, allPersonas }) {
+  const { t, lang } = useLang();
   const [relFilter, setRelFilter] = useState('persona');
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const element = getChineseElement(persona.fecha_nacimiento);
@@ -180,25 +181,25 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
         <div className="flex items-center gap-3 mb-6">
           <button onClick={onBack} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">←</button>
           <div className="flex-1" />
-          <button onClick={onEdit} className="text-sm text-white/60 hover:text-white mr-3">Editar</button>
-          <button onClick={onDelete} className="text-sm text-white/60 hover:text-red-300">Eliminar</button>
+          <button onClick={onEdit} className="text-sm text-white/60 hover:text-white mr-3">{t('editar')}</button>
+          <button onClick={onDelete} className="text-sm text-white/60 hover:text-red-300">{t('eliminar')}</button>
         </div>
         <div className="text-center">
           <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur mx-auto flex items-center justify-center text-4xl mb-3">
             {zodiac.emoji}
           </div>
           <h1 className="text-2xl font-bold">{persona.nombre}</h1>
-          <p className="text-white/70 mt-1">{birthDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}{persona.hora_nacimiento ? ` · ${persona.hora_nacimiento} hrs` : ''}</p>
+          <p className="text-white/70 mt-1">{birthDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}{persona.hora_nacimiento ? ` · ${persona.hora_nacimiento} hrs` : ''}</p>
           <button onClick={onChangeCategory}
             className="mt-2 inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-all">
-            {cat.label} <span className="opacity-60">✎</span>
+            {getLabel(cat, lang)} <span className="opacity-60">✎</span>
           </button>
           {persona.nota && (
             <p className="mt-2 text-sm text-white/50 italic">"{persona.nota}"</p>
           )}
           <button onClick={onEditNota}
             className="mt-1 text-xs text-white/40 hover:text-white/70 transition-all">
-            {persona.nota ? '✎ editar nota' : '+ agregar nota'}
+            {persona.nota ? t('editar_nota') : t('agregar_nota')}
           </button>
         </div>
       </div>
@@ -206,7 +207,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
       <div className="px-4 -mt-6 space-y-4 pb-24">
         {/* Número de vida */}
         <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm text-[#8d6e63] mb-2">Número de Vida</p>
+          <p className="text-sm text-[#8d6e63] mb-2">{t('numero_vida')}</p>
           <div className="flex items-center gap-4">
             <span className="text-5xl font-bold text-[#d4a843]">{lifeNum}</span>
             <div>
@@ -218,14 +219,14 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 
         {/* Zodiaco Chino */}
         <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm text-[#8d6e63] mb-2">Zodiaco Chino</p>
+          <p className="text-sm text-[#8d6e63] mb-2">{t('zodiaco_chino')}</p>
           <div className="flex items-center gap-4">
             <span className="text-5xl">{zodiac.emoji}</span>
             <div>
               <h3 className="font-bold text-[#2d1f0e]">{zodiac.name}</h3>
               <p className="text-sm text-[#8d6e63] mt-1">{zodiac.traits}</p>
               {chineseYear !== gregorianYear && (
-                <p className="text-xs text-[#d4a843] mt-1">⚡ Año chino: {chineseYear} (nació antes del Año Nuevo Lunar)</p>
+                <p className="text-xs text-[#d4a843] mt-1">⚡ {t('ano_chino_nota')}: {chineseYear} ({t('nacio_antes_lunar')})</p>
               )}
             </div>
           </div>
@@ -233,7 +234,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 
         {/* Elemento */}
         <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm text-[#8d6e63] mb-2">Elemento Chino</p>
+          <p className="text-sm text-[#8d6e63] mb-2">{t('elemento_chino')}</p>
           <div className="flex items-center gap-4">
             <span className="text-4xl">{element.emoji}</span>
             <div>
@@ -245,7 +246,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 
         {/* Yin / Yang */}
         <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm text-[#8d6e63] mb-2">Yin / Yang</p>
+          <p className="text-sm text-[#8d6e63] mb-2">{t('yin_yang')}</p>
           <div className="flex items-center gap-4">
             <span className="text-4xl">{yinYang.emoji}</span>
             <div>
@@ -257,26 +258,26 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 
         {/* Zodiaco Occidental */}
         <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm text-[#8d6e63] mb-2">Zodiaco Occidental</p>
+          <p className="text-sm text-[#8d6e63] mb-2">{t('zodiaco_occidental')}</p>
           <div className="flex items-center gap-4">
             <span className="text-4xl">{western.emoji}</span>
             <div>
               <h3 className="font-bold text-[#2d1f0e]">{western.name}</h3>
-              <p className="text-sm text-[#8d6e63] mt-1">Elemento: {western.element} · {western.modality}</p>
+              <p className="text-sm text-[#8d6e63] mt-1">{lang === 'en' ? 'Element' : 'Elemento'}: {western.element} · {western.modality}</p>
             </div>
           </div>
         </div>
 
         {/* Nakshatra Védico */}
         <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm text-[#8d6e63] mb-2">Nakshatra Védico</p>
+          <p className="text-sm text-[#8d6e63] mb-2">{t('nakshatra_vedico')}</p>
           <div className="flex items-center gap-4">
             <span className="text-4xl">🪷</span>
             <div>
               <h3 className="font-bold text-[#2d1f0e]">{nakshatra.name}</h3>
-              <p className="text-sm text-[#8d6e63] mt-1">Pada {nakshatra.pada} · Grupo: {nakshatra.group}</p>
+              <p className="text-sm text-[#8d6e63] mt-1">Pada {nakshatra.pada} · {lang === 'en' ? 'Group' : 'Grupo'}: {nakshatra.group}</p>
               <p className="text-xs text-[#c4a882] mt-1">
-                {nakshatra.precision === 'buena' ? '✓ Precisión buena (con hora)' : '≈ Aproximado (sin hora de nacimiento)'}
+                {nakshatra.precision === 'buena' ? t('precision_buena') : t('precision_aprox')}
               </p>
             </div>
           </div>
@@ -284,17 +285,17 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 
         {/* Soul & Destiny Numbers */}
         <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm text-[#8d6e63] mb-3">Numerología del Nombre</p>
+          <p className="text-sm text-[#8d6e63] mb-3">{t('numerologia_nombre')}</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center p-3 rounded-xl bg-[#faf5eb]">
-              <p className="text-xs text-[#c4a882] mb-1">Nº del Alma</p>
+              <p className="text-xs text-[#c4a882] mb-1">{t('num_alma')}</p>
               <span className="text-3xl font-bold text-[#d4a843]">{soulNum ?? '—'}</span>
-              <p className="text-xs text-[#8d6e63] mt-1">Deseos internos</p>
+              <p className="text-xs text-[#8d6e63] mt-1">{t('deseos_internos')}</p>
             </div>
             <div className="text-center p-3 rounded-xl bg-[#faf5eb]">
-              <p className="text-xs text-[#c4a882] mb-1">Nº del Destino</p>
+              <p className="text-xs text-[#c4a882] mb-1">{t('num_destino')}</p>
               <span className="text-3xl font-bold text-[#d4a843]">{destinyNum ?? '—'}</span>
-              <p className="text-xs text-[#8d6e63] mt-1">Misión de vida</p>
+              <p className="text-xs text-[#8d6e63] mt-1">{t('mision_vida')}</p>
             </div>
           </div>
         </div>
@@ -302,7 +303,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
         {/* Aliados y Enemigos */}
         <details className="bg-white rounded-2xl card-glow">
           <summary className="px-5 pt-5 pb-3 cursor-pointer flex items-center justify-between">
-            <p className="text-sm text-[#8d6e63]">Aliados y Opuestos</p>
+            <p className="text-sm text-[#8d6e63]">{t('aliados_opuestos')}</p>
             <span className="text-xs text-[#c4a882]">▼</span>
           </summary>
           <div className="px-5 pb-5">
@@ -314,17 +315,17 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                 onClick={() => setRelFilter(g.value)}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${relFilter === g.value ? 'text-white' : 'bg-[#faf5eb] text-[#8d6e63] hover:bg-[#f0e6d6]'}`}
                 style={relFilter === g.value ? { backgroundColor: g.color } : {}}
-              >{g.label}</button>
+              >{getLabel(g, lang)}</button>
             ))}
             <button
               onClick={() => setRelFilter('all')}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${relFilter === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-[#faf5eb] text-[#8d6e63] hover:bg-[#f0e6d6]'}`}
-            >Todos</button>
+            >{t('todos')}</button>
           </div>
 
           <div className="space-y-3">
             <div>
-              <p className="text-xs text-[#c4a882] mb-1.5">🤝 Aliados (triángulo de afinidad)</p>
+              <p className="text-xs text-[#c4a882] mb-1.5">{t('aliados_triangulo')}</p>
               <div className="flex gap-2">
                 {allies.map(a => {
                   const animal = ZODIAC_ANIMALS.find(z => z.name === a);
@@ -343,12 +344,12 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                 </div>
               )}
               {filteredRelationships && filteredRelationships.allies.every(a => a.people.length === 0) && relFilter !== 'all' && (
-                <p className="mt-2 text-xs text-[#c4a882] italic">Sin aliados en esta categoría</p>
+                <p className="mt-2 text-xs text-[#c4a882] italic">{t('sin_aliados_cat')}</p>
               )}
             </div>
             {enemy && (
               <div>
-                <p className="text-xs text-[#c4a882] mb-1.5">⚡ Opuesto</p>
+                <p className="text-xs text-[#c4a882] mb-1.5">{t('opuesto')}</p>
                 <span className="px-3 py-1.5 rounded-full bg-red-50 text-red-700 text-sm">
                   {ZODIAC_ANIMALS.find(z => z.name === enemy)?.emoji} {enemy}
                 </span>
@@ -358,7 +359,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                   </p>
                 )}
                 {filteredRelationships && filteredRelationships.enemy.people.length === 0 && relFilter !== 'all' && (
-                  <p className="mt-2 text-xs text-[#c4a882] italic">Sin opuestos en esta categoría</p>
+                  <p className="mt-2 text-xs text-[#c4a882] italic">{t('sin_opuestos_cat')}</p>
                 )}
               </div>
             )}
@@ -384,13 +385,13 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           return (
             <details className="bg-white rounded-2xl card-glow">
               <summary className="px-5 pt-5 pb-3 cursor-pointer flex items-center justify-between">
-                <p className="text-sm text-[#8d6e63]">🏆 Mejores 5 y ⚡ Menores 5</p>
+                <p className="text-sm text-[#8d6e63]">{t('mejores_menores')}</p>
                 <span className="text-xs text-[#c4a882]">▼</span>
               </summary>
               <div className="px-5 pb-5">
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-[#c4a882] mb-2">🏆 Mejores 5 — Mayor afinidad</p>
+                  <p className="text-xs text-[#c4a882] mb-2">{t('mejores_5')}</p>
                   <div className="space-y-1.5">
                     {top5.map((p, i) => {
                       const z = getChineseZodiac(p.fecha_nacimiento);
@@ -412,7 +413,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                             <span>♈ Occidental: {p.fullScore.western.score}</span>
                             <span>🪷 Védico: {p.fullScore.vedic.score}</span>
                             <span>🔢 Numerología: {p.fullScore.numerology.score}</span>
-                            <span className="col-span-2 text-[#c4a882] mt-1">Ponderado 4 tradiciones: {p.fullScore.overall.toFixed(1)}</span>
+                            <span className="col-span-2 text-[#c4a882] mt-1">{t('ponderado_4')}: {p.fullScore.overall.toFixed(1)}</span>
                           </div>
                         </details>
                       );
@@ -420,7 +421,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-[#c4a882] mb-2">⚡ Menores 5 — Menor afinidad</p>
+                  <p className="text-xs text-[#c4a882] mb-2">{t('menores_5')}</p>
                   <div className="space-y-1.5">
                     {bottom5.map((p, i) => {
                       const z = getChineseZodiac(p.fecha_nacimiento);
@@ -442,7 +443,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                             <span>♈ Occidental: {p.fullScore.western.score}</span>
                             <span>🪷 Védico: {p.fullScore.vedic.score}</span>
                             <span>🔢 Numerología: {p.fullScore.numerology.score}</span>
-                            <span className="col-span-2 text-[#c4a882] mt-1">Ponderado 4 tradiciones: {p.fullScore.overall.toFixed(1)}</span>
+                            <span className="col-span-2 text-[#c4a882] mt-1">{t('ponderado_4')}: {p.fullScore.overall.toFixed(1)}</span>
                           </div>
                         </details>
                       );
@@ -465,12 +466,12 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🔱</span>
                   <div>
-                    <div className="font-bold text-sm">Kairos Flow</div>
-                    <div className="text-xs opacity-70">9 posiciones numerológicas</div>
+                    <div className="font-bold text-sm">{t('kairos_flow')}</div>
+                    <div className="text-xs opacity-70">{t('9_posiciones')}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs opacity-60">Legado</span>
+                  <span className="text-xs opacity-60">{t('legado')}</span>
                   <span className={`text-lg font-black ${legacy.isMaster ? 'text-amber-300' : 'text-white'}`}>
                     {legacy.isMaster ? `☆${legacy.value}` : legacy.value}
                   </span>
@@ -510,7 +511,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                   })}
                 </div>
                 <div className="mt-3 text-center text-[10px] text-white/30">
-                  Kairos Flow · Basado en fecha de nacimiento · Números maestros (11, 22, 33) no se reducen
+                  {t('kairos_footer')}
                 </div>
               </div>
             </details>
@@ -519,7 +520,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 
         <button onClick={onCompare}
           className="w-full py-4 rounded-2xl gradient-mystic text-white font-semibold text-lg hover:opacity-90 transition-all">
-          🔮 Comparar con...
+          {t('comparar_con')}
         </button>
       </div>
     </div>
