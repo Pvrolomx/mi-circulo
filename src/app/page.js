@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES, calcKairosFlow, calcKairosFlowMaster, KAIROS_MEANINGS, calcPersonalYear, PERSONAL_YEAR_MEANINGS } from '@/lib/numerology';
+import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES, calcKairosFlow, calcKairosFlowMaster, KAIROS_MEANINGS, KAIROS_CONTEXTUAL, calcPersonalYear, PERSONAL_YEAR_MEANINGS } from '@/lib/numerology';
 import { getPersonas, addPersona, updatePersona, deletePersona, subscribeToChanges } from '@/lib/supabase';
 import { LangToggle, useLang } from '@/lib/i18n';
 
@@ -497,6 +497,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                 <div className="grid gap-1.5">
                   {kairos.map(k => {
                     const meaning = KAIROS_MEANINGS[k.value];
+                    const contextKey = `${k.pos}-${k.value}`;
+                    const contextual = KAIROS_CONTEXTUAL[contextKey];
                     return (
                       <details key={k.pos} className={`rounded-xl ${k.pos === 9 ? 'bg-white/15 border border-amber-400/30' : 'bg-white/8'}`}>
                         <summary className="flex items-center justify-between px-3 py-2 cursor-pointer">
@@ -518,7 +520,10 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                               {tData(meaning.title)}
                             </div>
                             <div className="text-[10px] text-amber-200/60 mb-1.5">{tData(meaning.keywords)}</div>
-                            <div className="text-xs text-white/70 leading-relaxed">{tData(meaning.desc)}</div>
+                            {contextual && (
+                              <div className="text-xs text-white/80 leading-relaxed mb-1.5 italic">{contextual}</div>
+                            )}
+                            <div className="text-[10px] text-white/50 leading-relaxed">{tData(meaning.desc)}</div>
                           </div>
                         )}
                       </details>
