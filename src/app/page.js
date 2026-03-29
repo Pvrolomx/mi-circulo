@@ -291,7 +291,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
         </div>
 
         {/* Aliados y Enemigos */}
-        <details className="bg-white rounded-2xl card-glow" open>
+        <details className="bg-white rounded-2xl card-glow">
           <summary className="px-5 pt-5 pb-3 cursor-pointer flex items-center justify-between">
             <p className="text-sm text-[#8d6e63]">Aliados y Opuestos</p>
             <span className="text-xs text-[#c4a882]">▼</span>
