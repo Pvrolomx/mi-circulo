@@ -1197,7 +1197,7 @@ export default function Home() {
   const [showEdit, setShowEdit] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filterCat, setFilterCat] = useState('all');
+  const [filterCat, setFilterCat] = useState(null);
   const [filterSubCat, setFilterSubCat] = useState('all');
   const [filterZodiac, setFilterZodiac] = useState('all');
   const [showZodiacFilter, setShowZodiacFilter] = useState(false);
@@ -1297,8 +1297,9 @@ export default function Home() {
 
   const filtered = personas.filter(p => {
     const matchSearch = !search || p.nombre.toLowerCase().includes(search.toLowerCase());
+    if (filterCat === null && !search) return false;
     const activeGroup = GROUPS.find(g => g.value === filterCat);
-    const matchCat = filterCat === 'all' || (activeGroup ? activeGroup.cats.includes(p.categoria) : false);
+    const matchCat = filterCat === null || filterCat === 'all' || (activeGroup ? activeGroup.cats.includes(p.categoria) : false);
     const matchSubCat = filterSubCat === 'all' || p.categoria === filterSubCat;
     const matchZodiac = filterZodiac === 'all' || getChineseZodiac(p.fecha_nacimiento).name === filterZodiac;
     const matchNumber = filterNumber === 'all' || calcLifeNumber(p.fecha_nacimiento) === parseInt(filterNumber);
@@ -1411,7 +1412,7 @@ export default function Home() {
           );
         })}
       </div>
-      {filterCat !== 'all' && (() => {
+      {filterCat && filterCat !== 'all' && (() => {
         const activeGroup = GROUPS.find(g => g.value === filterCat);
         if (!activeGroup || activeGroup.cats.length <= 1) return null;
         const subCats = CATEGORIES.filter(c => activeGroup.cats.includes(c.value));
@@ -1496,6 +1497,13 @@ export default function Home() {
       <div className="px-4 mt-4 space-y-3">
         {loading ? (
           <div className="text-center py-16 text-[#8d6e63]">Cargando...</div>
+        ) : filterCat === null && !search ? (
+          <div className="text-center py-16">
+            <div className="text-5xl mb-4">🔮</div>
+            <p className="text-[#8d6e63] font-medium">Mi Círculo</p>
+            <p className="text-sm text-[#c4a882] mt-2">Selecciona un grupo o busca por nombre</p>
+            <p className="text-xs text-[#c4a882] mt-1">{personas.length} registros</p>
+          </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-5xl mb-4">🔮</div>
