@@ -346,6 +346,29 @@ const DATA_MAP = {
   'Número maestro. El más poderoso en numerología. Capacidad de transformar sueños grandiosos en realidad tangible. Arquitecto de imperios con propósito espiritual. Doble 2 con la estabilidad del 4.': 'Master number. The most powerful in numerology. Ability to transform grand dreams into tangible reality. Architect of empires with spiritual purpose. Double 2 with the stability of 4.',
   'Amor incondicional · Guía · Elevación': 'Unconditional love · Guide · Elevation',
   'Número maestro. El más raro y elevado. Amor incondicional expresado como servicio supremo. Guía espiritual que eleva la consciencia colectiva. Doble 3 con el corazón del 6.': 'Master number. The rarest and most elevated. Unconditional love expressed as supreme service. Spiritual guide that elevates collective consciousness. Double 3 with the heart of 6.',
+  // Kairos Master Edition positions
+  'Tu impacto externo': 'Your external impact', 'Lo que tu alma anhela': 'What your soul yearns for',
+  'Tu superpoder innato': 'Your innate superpower', 'Tu método de trabajo': 'Your work method',
+  'Centro de gravedad': 'Center of gravity', 'Tu estilo de vida': 'Your lifestyle',
+  'Misión espiritual': 'Spiritual mission', 'Apego emocional': 'Emotional attachment',
+  'Liberación final': 'Final liberation',
+  // Personal Year
+  'La Semilla': 'The Seed', 'La Conexión': 'The Connection', 'La Expresión': 'The Expression',
+  'Los Cimientos': 'The Foundation', 'El Cambio': 'The Change', 'El Hogar': 'The Home',
+  'La Introspección': 'The Introspection', 'El Poder': 'The Power', 'La Conclusión': 'The Conclusion',
+  'Despertar': 'Awakening', 'Construcción Maestra': 'Master Construction', 'Servicio Supremo': 'Supreme Service',
+  'Nuevos comienzos, identidad, fuerza de voluntad': 'New beginnings, identity, willpower',
+  'Cooperación, paciencia, relaciones, diplomacia': 'Cooperation, patience, relationships, diplomacy',
+  'Creatividad, comunicación, alegría, expansión social': 'Creativity, communication, joy, social expansion',
+  'Trabajo duro, estructura, disciplina, bases sólidas': 'Hard work, structure, discipline, solid foundations',
+  'Libertad, aventura, transformación, adaptabilidad': 'Freedom, adventure, transformation, adaptability',
+  'Responsabilidad, familia, amor, servicio, armonía': 'Responsibility, family, love, service, harmony',
+  'Análisis, espiritualidad, soledad productiva, verdad': 'Analysis, spirituality, productive solitude, truth',
+  'Abundancia, logros materiales, autoridad, cosecha': 'Abundance, material achievements, authority, harvest',
+  'Cierre de ciclos, soltar, sabiduría, humanitarismo': 'Closing cycles, letting go, wisdom, humanitarianism',
+  'Iluminación, intuición amplificada, año de visiones': 'Illumination, amplified intuition, year of visions',
+  'Manifestar lo imposible, arquitectura de legado': 'Manifesting the impossible, legacy architecture',
+  'Guía espiritual, amor incondicional, elevación colectiva': 'Spiritual guidance, unconditional love, collective elevation',
 };
 
 export function LangProvider({ children }) {
