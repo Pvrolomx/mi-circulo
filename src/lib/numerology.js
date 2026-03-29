@@ -389,15 +389,15 @@ export function calcFullCompatibility(person1, person2) {
 // ═══ KAIROS FLOW — 9 Posiciones Numerológicas ═══
 
 const KAIROS_POSITIONS = [
-  { pos: 1, name: 'The Mask', desc: 'Cómo apareces', emoji: '🎭' },
-  { pos: 2, name: 'The Heart', desc: 'Deseos internos', emoji: '❤️' },
-  { pos: 3, name: 'The Gift', desc: 'Talento natural', emoji: '🎁' },
-  { pos: 4, name: 'The Tool', desc: 'Carrera / Acción', emoji: '🔧' },
-  { pos: 5, name: 'The Soul', desc: 'Esencia core', emoji: '✨' },
-  { pos: 6, name: 'The Path', desc: 'Caminar diario', emoji: '🛤️' },
-  { pos: 7, name: 'The Calling', desc: 'Meta de vida', emoji: '📯' },
-  { pos: 8, name: 'The Shadow', desc: 'Reto oculto', emoji: '🌑' },
-  { pos: 9, name: 'The Legacy', desc: 'Legado final', emoji: '👑' },
+  { pos: 1, name: 'La Máscara', desc: 'Cómo apareces', emoji: '🎭' },
+  { pos: 2, name: 'El Corazón', desc: 'Deseos internos', emoji: '❤️' },
+  { pos: 3, name: 'El Don', desc: 'Talento natural', emoji: '🎁' },
+  { pos: 4, name: 'La Herramienta', desc: 'Carrera / Acción', emoji: '🔧' },
+  { pos: 5, name: 'El Alma', desc: 'Esencia core', emoji: '✨' },
+  { pos: 6, name: 'El Camino', desc: 'Caminar diario', emoji: '🛤️' },
+  { pos: 7, name: 'El Llamado', desc: 'Meta de vida', emoji: '📯' },
+  { pos: 8, name: 'La Sombra', desc: 'Reto oculto', emoji: '🌑' },
+  { pos: 9, name: 'El Legado', desc: 'Resultado final', emoji: '👑' },
 ];
 
 const KAIROS_MEANINGS = {
