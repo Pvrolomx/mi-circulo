@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES, calcKairosFlow, KAIROS_MEANINGS } from '@/lib/numerology';
 import { getPersonas, addPersona, updatePersona, deletePersona, subscribeToChanges } from '@/lib/supabase';
+import { LangToggle, useLang } from '@/lib/i18n';
 
 const CATEGORIES = [
   { value: 'familia', label: '👨‍👩‍👧 Familia', color: '#c62828', group: 'persona' },
@@ -1383,11 +1384,14 @@ export default function Home() {
             <h1 className="text-2xl font-bold">Mi Círculo</h1>
             <p className="text-white/60 text-sm mt-1">4 tradiciones · Zodiaco · Numerología</p>
           </div>
-          {installPrompt && (
-            <button onClick={handleInstall} className="text-xs px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20">
-              📲 Instalar
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            <LangToggle />
+            {installPrompt && (
+              <button onClick={handleInstall} className="text-xs px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20">
+                📲 Instalar
+              </button>
+            )}
+          </div>
         </div>
         <div className="relative">
           <input type="text" placeholder="Buscar persona..." value={search} onChange={e => setSearch(e.target.value)}
