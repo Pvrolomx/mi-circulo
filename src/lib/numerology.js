@@ -415,6 +415,136 @@ const KAIROS_MEANINGS = {
   33: { title: 'Maestro Sanador', keywords: 'Amor incondicional · Guía · Elevación', desc: 'Número maestro. El más raro y elevado. Amor incondicional expresado como servicio supremo. Guía espiritual que eleva la consciencia colectiva. Doble 3 con el corazón del 6.' },
 };
 
+// ═══ KAIROS CONTEXTUAL MEANINGS — 9 posiciones × 12 números = 108 interpretaciones ═══
+const KAIROS_CONTEXTUAL = {
+  // ══ POSICIÓN 1: LA MÁSCARA — Cómo apareces ante el mundo ══
+  '1-1': 'Proyectas liderazgo nato. La gente te ve como alguien que toma el control de cualquier situación. Tu primera impresión es de confianza y determinación.',
+  '1-2': 'Apareces como alguien accesible y diplomático. Tu presencia genera calma. La gente se siente escuchada contigo desde el primer momento.',
+  '1-3': 'Irradias alegría y carisma natural. Tu energía es contagiosa y la gente gravita hacia ti por tu expresividad y sentido del humor.',
+  '1-4': 'Proyectas seriedad y confiabilidad. Te perciben como alguien organizado y sólido. Tu primera impresión es de estabilidad y competencia.',
+  '1-5': 'Apareces como alguien magnético e impredecible. Tu energía es de aventura y cambio. La gente te ve como un espíritu libre que no sigue las reglas.',
+  '1-6': 'Proyectas calidez y protección. La gente siente que puede confiar en ti inmediatamente. Tu presencia es de hogar y seguridad emocional.',
+  '1-7': 'Apareces como alguien profundo y misterioso. Tu mirada dice más que tus palabras. La gente percibe que hay sabiduría detrás de tu silencio.',
+  '1-8': 'Proyectas poder y autoridad natural. Tu presencia impone respeto sin necesidad de palabras. La gente te ve como alguien que sabe lo que quiere.',
+  '1-9': 'Apareces como alguien sabio y compasivo. Tu energía es de alguien que ha vivido mucho. La gente siente tu generosidad y visión panorámica de la vida.',
+  '1-11': 'Proyectas una intensidad magnética y visionaria. La gente te percibe como alguien que sabe algo que ellos no, incluso sin decir nada. Tu presencia comunica autoridad espiritual.',
+  '1-22': 'Apareces como un arquitecto de realidades. Tu presencia transmite que puedes materializar lo imposible. La gente te ve como alguien destinado a construir algo grande.',
+  '1-33': 'Proyectas amor incondicional desde el primer encuentro. Tu presencia sana. La gente siente paz al estar cerca de ti, como si llegaras a elevar cualquier espacio.',
+
+  // ══ POSICIÓN 2: EL CORAZÓN — Deseos internos ══
+  '2-1': 'En el fondo deseas liderar y ser pionero. Tu corazón anhela independencia total y la libertad de crear tus propias reglas sin depender de nadie.',
+  '2-2': 'Tu deseo más profundo es la armonía y la conexión genuina con otros. Anhelas relaciones equilibradas donde dar y recibir fluyan naturalmente.',
+  '2-3': 'Tu corazón anhela expresarte plenamente — crear, comunicar, inspirar. La alegría y la conexión social son tu combustible interno.',
+  '2-4': 'En el fondo deseas estabilidad y orden. Tu corazón anhela bases sólidas sobre las cuales construir con paciencia y disciplina.',
+  '2-5': 'Tu deseo más profundo es la libertad absoluta. Anhelas experiencias nuevas, cambio constante y la emoción de lo desconocido.',
+  '2-6': 'Tu corazón anhela cuidar y ser cuidado. El amor familiar, la responsabilidad compartida y crear un refugio seguro son tu motor interno.',
+  '2-7': 'En el fondo deseas entender los misterios de la vida. Tu corazón anhela verdad, conocimiento profundo y momentos de introspección sagrada.',
+  '2-8': 'Tu deseo más profundo es el logro y la abundancia con propósito. Anhelas dejar huella material y demostrar que la visión puede volverse realidad.',
+  '2-9': 'Tu corazón anhela servir a algo más grande que tú mismo. El humanitarismo, la compasión universal y el cierre de ciclos son tu motivación profunda.',
+  '2-11': 'Tus deseos internos son puros y elevados. No te motiva lo material por sí solo, sino la revelación y la conexión profunda. Lo que muestras es lo que sientes — autenticidad radical.',
+  '2-22': 'Tu corazón anhela construir imperios con propósito espiritual. No cualquier logro te satisface — necesitas que lo que construyas transforme generaciones.',
+  '2-33': 'Tu deseo más profundo es el amor incondicional expresado como servicio. Anhelas elevar la consciencia colectiva a través de la sanación y la guía.',
+
+  // ══ POSICIÓN 3: EL DON — Talento natural ══
+  '3-1': 'Tu talento innato es el liderazgo. Naciste con la capacidad de iniciar proyectos, inspirar a otros y abrir caminos donde no los hay.',
+  '3-2': 'Tu don natural es la diplomacia. Tienes una capacidad extraordinaria para mediar conflictos, leer emociones y crear puentes entre personas.',
+  '3-3': 'Tu talento innato es la creatividad pura. Las ideas fluyen en ti como agua. Comunicar, crear y expresarte artísticamente es tan natural como respirar.',
+  '3-4': 'Tu don natural es construir sistemas sólidos. Donde otros ven caos, tú ves estructura. Organizas, planificas y ejecutas con precisión metódica.',
+  '3-5': 'Tu talento innato es la adaptabilidad. Navegas el cambio con gracia. Donde otros se paralizan, tú ves oportunidad. Eres catalizador de transformación.',
+  '3-6': 'Tu don natural es el cuidado y la nutrición. Creas espacios seguros de forma instintiva. Las personas florecen bajo tu protección y guía amorosa.',
+  '3-7': 'Tu talento innato es el análisis profundo. Ves patrones que otros ignoran. Tu mente conecta puntos invisibles y encuentra verdades ocultas.',
+  '3-8': 'Tu don natural es la manifestación material. Conviertes ideas en realidad con una eficiencia que asombra. El mundo de los recursos y el poder responde a tu energía.',
+  '3-9': 'Tu talento innato es la visión panorámica. Ves el cuadro completo cuando otros se pierden en detalles. Tu generosidad y compasión inspiran movimientos.',
+  '3-11': 'Tu don natural es la percepción extrasensorial. Captas lo que otros no ven: intenciones, energías, patrones ocultos. Eres canal entre lo invisible y lo visible.',
+  '3-22': 'Tu talento innato es la arquitectura de lo imposible. No solo sueñas en grande — tienes la capacidad real de materializar visiones que otros consideran inalcanzables.',
+  '3-33': 'Tu don natural es la sanación a través del amor. Tu presencia eleva. Las personas se transforman al estar cerca de ti sin que necesites hacer nada especial.',
+
+  // ══ POSICIÓN 4: LA HERRAMIENTA — Carrera / Acción ══
+  '4-1': 'Tu herramienta profesional es la iniciativa. Funcionas mejor liderando proyectos propios que siguiendo instrucciones. El emprendimiento es tu medio natural.',
+  '4-2': 'Tu herramienta de trabajo es la cooperación. Brillas en alianzas y sociedades. Tu capacidad de escuchar y negociar es tu mayor activo profesional.',
+  '4-3': 'Tu herramienta profesional es la comunicación. Vendes ideas, inspiras equipos y conectas personas. Las carreras creativas y sociales son tu campo natural.',
+  '4-4': 'Tu herramienta de trabajo es la disciplina metódica. Sistemas, procesos, orden — construyes infraestructura que perdura. Eres el pilar que sostiene cualquier organización.',
+  '4-5': 'Tu herramienta profesional es la versatilidad. Cambias de rol, de proyecto, de industria con facilidad. Tu carrera no es lineal — es un caleidoscopio productivo.',
+  '4-6': 'Tu herramienta de trabajo es la armonía y el servicio. Resuelves problemas a través del consejo, la estética o el cuidado. Tu martillo es la diplomacia equilibrada.',
+  '4-7': 'Tu herramienta profesional es la investigación. Analizas, estudias, profundizas. Las carreras que requieren expertise especializado son tu terreno ideal.',
+  '4-8': 'Tu herramienta de trabajo es la gestión de recursos. Manejas dinero, personas y proyectos con visión estratégica. El mundo corporativo o empresarial responde a tu energía.',
+  '4-9': 'Tu herramienta profesional es el servicio humanitario. Tu carrera cobra sentido cuando ayuda a otros. Las causas sociales, la enseñanza o la consultoría transformadora son tu camino.',
+  '4-11': 'Tu método de trabajo es la intuición, no el manual. Tomas decisiones acertadas de corazonada donde otros necesitan datos. Tu carrera florece cuando confías en tu voz interior.',
+  '4-22': 'Tu herramienta profesional es la visión arquitectónica. No haces tareas — diseñas sistemas completos. Tu carrera es construir imperios, no administrar cubículos.',
+  '4-33': 'Tu herramienta de trabajo es la guía compasiva. Tu carrera se trata de elevar a otros: enseñanza, sanación, mentoría. Lideras desde el corazón, no desde el ego.',
+
+  // ══ POSICIÓN 5: EL ALMA — Esencia core ══
+  '5-1': 'Tu esencia más profunda es la del iniciador. En tu centro hay una chispa que necesita crear, liderar y abrir caminos. Sin eso, te sientes vacío.',
+  '5-2': 'Tu esencia core es la del conector. En lo más profundo, necesitas armonía y relaciones genuinas. Tu paz interior depende de tus vínculos.',
+  '5-3': 'Tu esencia más profunda es la del artista. La creatividad no es lo que haces — es lo que eres. Sin expresión, tu alma se marchita.',
+  '5-4': 'Tu esencia core es la del constructor. En tu centro hay una necesidad de orden y solidez. Te sientes pleno cuando edificas algo tangible y duradero.',
+  '5-5': 'Tu esencia más profunda es la del explorador. Necesitas movimiento, cambio y novedad para sentirte vivo. La rutina mata tu espíritu.',
+  '5-6': 'Tu esencia core es la del protector. En lo más profundo, necesitas cuidar y ser amado. Tu hogar interior es tu santuario.',
+  '5-7': 'Tu esencia más profunda es la del buscador de verdad. Necesitas periodos de soledad y estudio para alimentar tu espíritu. Sin introspección, tu energía se agota.',
+  '5-8': 'Tu esencia core es la del manifestador. En tu centro hay una fuerza que transforma visiones en materia. Tu poder interior es magnético y tangible.',
+  '5-9': 'Tu esencia más profunda es la del sabio compasivo. Has vivido muchas vidas en una. Tu alma busca trascender lo personal y servir a lo universal.',
+  '5-11': 'Tu esencia core es la del iluminador. Necesitas momentos de silencio y conexión espiritual para recargar. Sin esa pausa, tu alta frecuencia se convierte en ansiedad.',
+  '5-22': 'Tu esencia más profunda es la del arquitecto cósmico. Sientes el peso de un propósito enorme. Tu alma no descansa hasta que la visión se vuelve estructura.',
+  '5-33': 'Tu esencia core es amor puro. En lo más profundo, existes para elevar. Tu alma irradia una frecuencia de sanación que transforma todo lo que toca.',
+
+  // ══ POSICIÓN 6: EL CAMINO — Caminar diario ══
+  '6-1': 'Tu día a día debe incluir actos de liderazgo e independencia. Las rutinas donde otros deciden por ti te drenan. Necesitas autonomía en tu cotidiano.',
+  '6-2': 'Tu caminar diario requiere cooperación y armonía. Los días conflictivos te desestabilizan. Necesitas paz y colaboración en tu rutina para funcionar.',
+  '6-3': 'Tu día a día debe tener dosis de creatividad y conexión social. Los días monótonos sin expresión artística o conversaciones significativas te apagan.',
+  '6-4': 'Tu caminar diario necesita estructura y orden. Una rutina clara con tareas definidas te da paz. El caos cotidiano es tu kryptonita.',
+  '6-5': 'Tu día a día necesita variedad y aventura. La misma rutina todos los días te mata lentamente. Necesitas novedad, viajes o al menos cambios de escenario.',
+  '6-6': 'Tu caminar diario se centra en el hogar y las responsabilidades familiares. Cuidar tu espacio y tus seres queridos es lo que le da sentido a tus días.',
+  '6-7': 'Tu día a día necesita momentos de soledad y reflexión. Sin tiempo para pensar profundamente, acumulas ruido mental que te desconecta de tu propósito.',
+  '6-8': 'Tu caminar diario debe orientarse a la productividad y el logro. Necesitas sentir que cada día te acerca a una meta concreta. El ocio sin propósito te frustra.',
+  '6-9': 'Tu día a día debe estar orientado a servir un propósito mayor. Las tareas triviales te vacían. Necesitas sentir que tu rutina contribuye a algo trascendente.',
+  '6-11': 'Tu día a día debe incluir momentos de inspiración y conexión espiritual. Las rutinas mecánicas te drenan. Necesitas sentir revelación o servicio elevado cada día.',
+  '6-22': 'Tu caminar diario es el de un constructor de visiones. Cada día debe tener un ladrillo puesto hacia tu obra mayor. La dispersión es tu enemigo.',
+  '6-33': 'Tu día a día se trata de servir y sanar. Tu rutina ideal incluye actos de amor y guía. Los días sin conexión humana profunda se sienten vacíos.',
+
+  // ══ POSICIÓN 7: EL LLAMADO — Meta de vida ══
+  '7-1': 'Tu meta de vida es liderar algo propio. Viniste a ser pionero, a crear caminos nuevos. Tu éxito se mide en cuántas puertas abriste para otros.',
+  '7-2': 'Tu meta de vida es ser el puente entre personas. Viniste a crear armonía donde hay conflicto. Tu legado es la paz que sembraste en tus relaciones.',
+  '7-3': 'Tu meta de vida es inspirar a través de la expresión. Viniste a comunicar, crear y alegrar. Tu éxito se mide en cuántas almas tocaste con tu arte.',
+  '7-4': 'Tu meta de vida es construir algo que perdure. Viniste a dejar estructuras sólidas — sistemas, organizaciones, legados tangibles que sobrevivan a tu tiempo.',
+  '7-5': 'Tu meta de vida es expandir los límites de lo posible. Viniste a romper moldes, explorar territorios nuevos y mostrar que la libertad es un derecho sagrado.',
+  '7-6': 'Tu meta de vida es proteger y nutrir. Viniste a ser el pilar de tu comunidad. Tu éxito se mide en cuántas personas florecieron bajo tu cuidado.',
+  '7-7': 'Tu meta de vida es descubrir verdades profundas. Viniste a ser el buscador, el filósofo, el que conecta los puntos que nadie ve. Tu legado es conocimiento.',
+  '7-8': 'Tu meta de vida es manifestar abundancia con propósito. Viniste a demostrar que el poder material puede usarse para transformar realidades positivamente.',
+  '7-9': 'Tu meta de vida es el servicio universal. Viniste a cerrar ciclos kármicos y enseñar a otros a soltar. Tu éxito se mide en la evolución que inspiraste.',
+  '7-11': 'Tu misión de vida es ser canal de luz. Viniste a traer información e inspiración que eleve la conciencia de quienes te rodean. Tu llamado es iluminar.',
+  '7-22': 'Tu meta de vida es arquitectar el futuro. Viniste a construir estructuras que cambien la civilización. No piensas en años — piensas en generaciones.',
+  '7-33': 'Tu meta de vida es la elevación colectiva a través del amor incondicional. Viniste a ser maestro de maestros. Tu legado trasciende lo individual.',
+
+  // ══ POSICIÓN 8: LA SOMBRA — Reto oculto ══
+  '8-1': 'Tu reto oculto es el ego descontrolado. La necesidad de ser primero puede aislarte. El desafío es liderar desde el servicio, no desde la dominancia.',
+  '8-2': 'Tu reto oculto es la dependencia emocional. Buscas aprobación externa para validarte. El desafío es encontrar tu equilibrio interior sin necesitar a otros.',
+  '8-3': 'Tu reto oculto es la dispersión. Tanta creatividad sin foco se vuelve caos. El desafío es canalizar tu expresión hacia proyectos que termines.',
+  '8-4': 'Tu reto oculto es la rigidez. Tu necesidad de control y orden puede convertirse en una prisión. El desafío es soltar el perfeccionismo y fluir.',
+  '8-5': 'Tu reto oculto es la inestabilidad. Tanto cambio sin ancla te puede dejar sin raíces. El desafío es encontrar libertad dentro de la estructura.',
+  '8-6': 'Tu reto oculto es el sacrificio excesivo. Das tanto que te vacías. El desafío es aprender que cuidar de ti mismo no es egoísmo — es supervivencia.',
+  '8-7': 'Tu reto oculto es el aislamiento. Tu búsqueda de profundidad puede convertirse en desconexión del mundo. El desafío es compartir tu sabiduría, no guardarla.',
+  '8-8': 'Tu reto oculto es la obsesión con el poder. La ambición desmedida puede costarte relaciones y salud. El desafío es usar tu fuerza para elevar, no dominar.',
+  '8-9': 'Tu reto oculto es el apego. No puedes soltar personas, proyectos o ideales que ya cumplieron su ciclo. El desafío es aprender que soltar es avanzar.',
+  '8-11': 'Tu reto oculto es la hipersensibilidad. Absorbes emociones ajenas como esponja y eso te paraliza. El desafío es distinguir lo tuyo de lo ajeno y poner límites energéticos.',
+  '8-22': 'Tu reto oculto es la autoexigencia imposible. El peso de tu visión puede aplastarte. El desafío es aceptar que el progreso gradual también es maestría.',
+  '8-33': 'Tu reto oculto es el martirio espiritual. Cargas el dolor del mundo sobre tus hombros. El desafío es servir sin sacrificarte — tu bienestar también eleva al colectivo.',
+
+  // ══ POSICIÓN 9: EL LEGADO — Resultado final ══
+  '9-1': 'Tu legado es el de un pionero. Serás recordado como alguien que abrió puertas que nadie se atrevía a tocar. Dejaste caminos donde solo había selva.',
+  '9-2': 'Tu legado es la paz que sembraste. Serás recordado como el puente entre mundos opuestos. Dejaste armonía donde había conflicto.',
+  '9-3': 'Tu legado es la inspiración. Serás recordado por tu creatividad y tu capacidad de hacer que otros sonrían, piensen y creen. Dejaste belleza en el mundo.',
+  '9-4': 'Tu legado es lo que construiste. Serás recordado por las estructuras sólidas que dejaste — organizaciones, sistemas, fundaciones que perduran sin ti.',
+  '9-5': 'Tu legado es la libertad. Serás recordado como alguien que enseñó a otros a vivir sin cadenas. Dejaste una frecuencia de aventura y autenticidad.',
+  '9-6': 'Tu legado es el amor. Serás recordado por cuántas personas protegiste y nutriste. Dejaste un hogar emocional que trasciende las paredes físicas.',
+  '9-7': 'Tu legado es la verdad. Serás recordado como alguien que buscó y encontró respuestas profundas. Dejaste conocimiento que ilumina a generaciones futuras.',
+  '9-8': 'Tu legado es el poder transformador. Serás recordado por haber convertido visiones en imperios con propósito. Dejaste abundancia que sigue generando.',
+  '9-9': 'Tu legado es la trascendencia. Serás recordado como un alma vieja que completó su ciclo con gracia. Dejaste sabiduría universal y compasión infinita.',
+  '9-11': 'Tu legado es la frecuencia vibratoria que dejaste en otros. Serás recordado no por lo que construiste, sino por la intuición que despertaste en quienes te conocieron.',
+  '9-22': 'Tu legado es la obra maestra que construiste. Serás recordado como el arquitecto de algo que cambió la realidad para generaciones enteras.',
+  '9-33': 'Tu legado es la elevación espiritual del colectivo. Serás recordado como un ser de luz que vino a recordarle al mundo lo que es el amor incondicional.',
+};
+
+
 function reduceMaster(n) {
   while (n > 9) {
     if (n === 11 || n === 22 || n === 33) return n;
@@ -518,5 +648,5 @@ function calcPersonalYear(fechaNacimiento, currentYear) {
   return reduceMaster(total);
 }
 
-export { ZODIAC_ANIMALS, ELEMENTS, LIFE_NUMBER_MEANINGS, WESTERN_SIGNS, AFFINITY_TRIANGLES, OPPOSITES, KAIROS_POSITIONS, KAIROS_POSITIONS_MASTER, KAIROS_MEANINGS, calcKairosFlow, calcKairosFlowMaster, PERSONAL_YEAR_MEANINGS, calcPersonalYear };
+export { ZODIAC_ANIMALS, ELEMENTS, LIFE_NUMBER_MEANINGS, WESTERN_SIGNS, AFFINITY_TRIANGLES, OPPOSITES, KAIROS_POSITIONS, KAIROS_POSITIONS_MASTER, KAIROS_MEANINGS, KAIROS_CONTEXTUAL, calcKairosFlow, calcKairosFlowMaster, PERSONAL_YEAR_MEANINGS, calcPersonalYear };
 
