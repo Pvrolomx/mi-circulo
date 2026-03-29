@@ -386,4 +386,57 @@ export function calcFullCompatibility(person1, person2) {
   };
 }
 
-export { ZODIAC_ANIMALS, ELEMENTS, LIFE_NUMBER_MEANINGS, WESTERN_SIGNS, AFFINITY_TRIANGLES, OPPOSITES };
+// ═══ KAIROS FLOW — 9 Posiciones Numerológicas ═══
+
+const KAIROS_POSITIONS = [
+  { pos: 1, name: 'The Mask', desc: 'Cómo apareces', emoji: '🎭' },
+  { pos: 2, name: 'The Heart', desc: 'Deseos internos', emoji: '❤️' },
+  { pos: 3, name: 'The Gift', desc: 'Talento natural', emoji: '🎁' },
+  { pos: 4, name: 'The Tool', desc: 'Carrera / Acción', emoji: '🔧' },
+  { pos: 5, name: 'The Soul', desc: 'Esencia core', emoji: '✨' },
+  { pos: 6, name: 'The Path', desc: 'Caminar diario', emoji: '🛤️' },
+  { pos: 7, name: 'The Calling', desc: 'Meta de vida', emoji: '📯' },
+  { pos: 8, name: 'The Shadow', desc: 'Reto oculto', emoji: '🌑' },
+  { pos: 9, name: 'The Legacy', desc: 'Legado final', emoji: '👑' },
+];
+
+function reduceMaster(n) {
+  while (n > 9) {
+    if (n === 11 || n === 22 || n === 33) return n;
+    n = String(n).split('').reduce((a, d) => a + Number(d), 0);
+  }
+  return n;
+}
+
+function digitSumMaster(n) {
+  const s = String(Math.abs(n)).split('').reduce((a, d) => a + Number(d), 0);
+  return reduceMaster(s);
+}
+
+function calcKairosFlow(fechaNacimiento) {
+  const d = new Date(fechaNacimiento + 'T12:00:00');
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+  const year = d.getFullYear();
+  const last2 = year % 100;
+  const yearDigitSum = String(year).split('').reduce((a, c) => a + Number(c), 0);
+
+  const mask = reduceMaster(day);
+  const heart = reduceMaster(month);
+  const gift = reduceMaster(day + month);
+  const tool = reduceMaster(digitSumMaster(last2));
+  const soul = reduceMaster(yearDigitSum);
+  const path = reduceMaster(heart + yearDigitSum);
+  const calling = reduceMaster(mask + heart + yearDigitSum);
+  const shadow = reduceMaster(day + yearDigitSum);
+  const legacy = reduceMaster(mask + heart + gift + tool + soul + path + calling + shadow);
+
+  return [mask, heart, gift, tool, soul, path, calling, shadow, legacy].map((val, i) => ({
+    ...KAIROS_POSITIONS[i],
+    value: val,
+    isMaster: val === 11 || val === 22 || val === 33,
+  }));
+}
+
+export { ZODIAC_ANIMALS, ELEMENTS, LIFE_NUMBER_MEANINGS, WESTERN_SIGNS, AFFINITY_TRIANGLES, OPPOSITES, KAIROS_POSITIONS, calcKairosFlow };
+
