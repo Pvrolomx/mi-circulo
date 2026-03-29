@@ -258,11 +258,102 @@ const NUMEROLOGY = {
 
 const DICT = { ...UI, ...NUMEROLOGY };
 
+// ═══ DATA TRANSLATIONS — for values coming from numerology.js ═══
+const DATA_MAP = {
+  // Zodiac animal names
+  'Rata': 'Rat', 'Buey': 'Ox', 'Tigre': 'Tiger', 'Conejo': 'Rabbit',
+  'Dragón': 'Dragon', 'Serpiente': 'Snake', 'Caballo': 'Horse', 'Cabra': 'Goat',
+  'Mono': 'Monkey', 'Gallo': 'Rooster', 'Perro': 'Dog', 'Cerdo': 'Pig',
+  // Zodiac traits
+  'Ingeniosa, astuta, versátil, encantadora': 'Clever, cunning, versatile, charming',
+  'Fuerte, confiable, determinado, paciente': 'Strong, reliable, determined, patient',
+  'Valiente, competitivo, impredecible, seguro': 'Brave, competitive, unpredictable, confident',
+  'Elegante, amable, responsable, prudente': 'Elegant, kind, responsible, prudent',
+  'Enérgico, audaz, ambicioso, carismático': 'Energetic, bold, ambitious, charismatic',
+  'Sabia, intuitiva, elegante, misteriosa': 'Wise, intuitive, elegant, mysterious',
+  'Libre, activo, enérgico, aventurero': 'Free, active, energetic, adventurous',
+  'Creativa, compasiva, gentil, artística': 'Creative, compassionate, gentle, artistic',
+  'Ingenioso, curioso, juguetón, inteligente': 'Ingenious, curious, playful, intelligent',
+  'Observador, trabajador, valiente, puntual': 'Observant, hardworking, brave, punctual',
+  'Leal, honesto, amable, prudente': 'Loyal, honest, kind, prudent',
+  'Generoso, compasivo, diligente, optimista': 'Generous, compassionate, diligent, optimistic',
+  // Elements
+  'Madera': 'Wood', 'Fuego': 'Fire', 'Tierra': 'Earth', 'Metal': 'Metal', 'Agua': 'Water',
+  // Element influences
+  'Crecimiento, creatividad, expansión': 'Growth, creativity, expansion',
+  'Pasión, energía, transformación': 'Passion, energy, transformation',
+  'Estabilidad, nutrición, armonía': 'Stability, nurturing, harmony',
+  'Determinación, rigidez, fuerza': 'Determination, rigidity, strength',
+  'Adaptabilidad, sabiduría, intuición': 'Adaptability, wisdom, intuition',
+  // Yin Yang
+  'Yang': 'Yang', 'Yin': 'Yin',
+  'Activo, expansivo, extrovertido': 'Active, expansive, extroverted',
+  'Receptivo, introspectivo, intuitivo': 'Receptive, introspective, intuitive',
+  // Western signs
+  'Aries': 'Aries', 'Tauro': 'Taurus', 'Géminis': 'Gemini', 'Cáncer': 'Cancer',
+  'Leo': 'Leo', 'Virgo': 'Virgo', 'Libra': 'Libra', 'Escorpio': 'Scorpio',
+  'Sagitario': 'Sagittarius', 'Capricornio': 'Capricorn', 'Acuario': 'Aquarius', 'Piscis': 'Pisces',
+  // Western elements & modalities
+  'Aire': 'Air', 'Cardinal': 'Cardinal', 'Fijo': 'Fixed', 'Mutable': 'Mutable',
+  // Life number meanings
+  'El Líder': 'The Leader', 'El Diplomático': 'The Diplomat', 'El Creativo': 'The Creative',
+  'El Constructor': 'The Builder', 'El Aventurero': 'The Adventurer', 'El Protector': 'The Protector',
+  'El Buscador': 'The Seeker', 'El Poderoso': 'The Powerful', 'El Humanitario': 'The Humanitarian',
+  'Maestro Intuitivo': 'Intuitive Master', 'Maestro Constructor': 'Master Builder', 'Maestro Sanador': 'Master Healer',
+  'Independiente, pionero, ambicioso. Nació para liderar y abrir caminos.': 'Independent, pioneer, ambitious. Born to lead and blaze trails.',
+  'Cooperador, sensible, pacificador. Brilla en la armonía y las relaciones.': 'Cooperative, sensitive, peacemaker. Shines in harmony and relationships.',
+  'Expresivo, artístico, comunicativo. Su energía inspira y alegra.': 'Expressive, artistic, communicative. Their energy inspires and uplifts.',
+  'Práctico, organizado, estable. Construye bases sólidas para todo.': 'Practical, organized, stable. Builds solid foundations for everything.',
+  'Libre, adaptable, curioso. Busca experiencias y cambio constante.': 'Free, adaptable, curious. Seeks experiences and constant change.',
+  'Responsable, amoroso, hogareño. Cuida y nutre a quienes ama.': 'Responsible, loving, homebody. Cares for and nurtures those they love.',
+  'Analítico, espiritual, introspectivo. Busca verdades profundas.': 'Analytical, spiritual, introspective. Seeks deep truths.',
+  'Ambicioso, eficiente, materialista. Domina el mundo material.': 'Ambitious, efficient, materialistic. Masters the material world.',
+  'Compasivo, generoso, idealista. Vive para servir a los demás.': 'Compassionate, generous, idealistic. Lives to serve others.',
+  'Visionario, inspirador, iluminado. Canal de energía superior.': 'Visionary, inspiring, enlightened. Channel of higher energy.',
+  'Visionario práctico. Transforma sueños grandes en realidad.': 'Practical visionary. Transforms big dreams into reality.',
+  'Amor incondicional, servicio supremo. Eleva la consciencia colectiva.': 'Unconditional love, supreme service. Elevates collective consciousness.',
+  // Kairos positions
+  'La Máscara': 'The Mask', 'El Corazón': 'The Heart', 'El Don': 'The Gift',
+  'La Herramienta': 'The Tool', 'El Alma': 'The Soul', 'El Camino': 'The Path',
+  'El Llamado': 'The Calling', 'La Sombra': 'The Shadow', 'El Legado': 'The Legacy',
+  'Cómo apareces': 'How you appear', 'Deseos internos': 'Inner desires',
+  'Talento natural': 'Natural talent', 'Carrera / Acción': 'Career / Action',
+  'Esencia core': 'Core essence', 'Caminar diario': 'Daily walk',
+  'Meta de vida': 'Life goal', 'Reto oculto': 'Hidden challenge', 'Resultado final': 'Final result',
+  // Kairos meanings
+  'El Pionero': 'The Pioneer',
+  'Liderazgo · Independencia · Iniciativa': 'Leadership · Independence · Initiative',
+  'Energía de inicio y creación. Impulso para abrir caminos nuevos, liderar con originalidad y confiar en uno mismo. Fuerza de voluntad pura.': 'Energy of beginning and creation. Drive to blaze new trails, lead with originality and trust oneself. Pure willpower.',
+  'Cooperación · Sensibilidad · Equilibrio': 'Cooperation · Sensitivity · Balance',
+  'Energía de conexión y armonía. Capacidad natural para mediar, escuchar y crear puentes entre personas. Intuición emocional refinada.': 'Energy of connection and harmony. Natural ability to mediate, listen and bridge people. Refined emotional intuition.',
+  'Expresión · Alegría · Comunicación': 'Expression · Joy · Communication',
+  'Energía de expresión artística y social. Talento para comunicar ideas, inspirar a otros y encontrar belleza en lo cotidiano.': 'Energy of artistic and social expression. Talent for communicating ideas, inspiring others and finding beauty in everyday life.',
+  'Estructura · Disciplina · Fundamentos': 'Structure · Discipline · Foundations',
+  'Energía de orden y estabilidad. Capacidad para construir bases sólidas, organizar sistemas y trabajar con paciencia metódica.': 'Energy of order and stability. Ability to build solid foundations, organize systems and work with methodical patience.',
+  'Libertad · Cambio · Adaptabilidad': 'Freedom · Change · Adaptability',
+  'Energía de movimiento y transformación. Curiosidad insaciable, versatilidad y necesidad de experiencias nuevas. Catalizador de cambio.': 'Energy of movement and transformation. Insatiable curiosity, versatility and need for new experiences. Catalyst for change.',
+  'Responsabilidad · Amor · Servicio': 'Responsibility · Love · Service',
+  'Energía de cuidado y nutrición. Vocación natural de proteger, sanar y crear espacios seguros para los demás. Corazón de hogar.': 'Energy of care and nurturing. Natural vocation to protect, heal and create safe spaces for others. Heart of home.',
+  'Análisis · Espiritualidad · Profundidad': 'Analysis · Spirituality · Depth',
+  'Energía de introspección y búsqueda de verdad. Mente analítica con sed espiritual. Necesidad de entender los misterios de la vida.': 'Energy of introspection and truth-seeking. Analytical mind with spiritual thirst. Need to understand life\'s mysteries.',
+  'Abundancia · Autoridad · Manifestación': 'Abundance · Authority · Manifestation',
+  'Energía de poder material y logro. Capacidad para manifestar visiones en realidad, manejar recursos y ejercer influencia con propósito.': 'Energy of material power and achievement. Ability to manifest visions into reality, manage resources and wield influence with purpose.',
+  'Compasión · Sabiduría · Cierre': 'Compassion · Wisdom · Closure',
+  'Energía de culminación y servicio universal. Visión panorámica de la vida, generosidad innata y capacidad de soltar para avanzar.': 'Energy of culmination and universal service. Panoramic vision of life, innate generosity and ability to let go to move forward.',
+  'Visión · Iluminación · Canal': 'Vision · Illumination · Channel',
+  'Número maestro. Intuición amplificada al máximo, capacidad casi psíquica de percibir lo invisible. Canal entre lo espiritual y lo terrenal. Doble energía del 1 fusionada con la sensibilidad del 2.': 'Master number. Intuition amplified to the maximum, near-psychic ability to perceive the invisible. Channel between the spiritual and the earthly. Double energy of 1 fused with the sensitivity of 2.',
+  'Visión práctica · Arquitecto · Legado': 'Practical vision · Architect · Legacy',
+  'Número maestro. El más poderoso en numerología. Capacidad de transformar sueños grandiosos en realidad tangible. Arquitecto de imperios con propósito espiritual. Doble 2 con la estabilidad del 4.': 'Master number. The most powerful in numerology. Ability to transform grand dreams into tangible reality. Architect of empires with spiritual purpose. Double 2 with the stability of 4.',
+  'Amor incondicional · Guía · Elevación': 'Unconditional love · Guide · Elevation',
+  'Número maestro. El más raro y elevado. Amor incondicional expresado como servicio supremo. Guía espiritual que eleva la consciencia colectiva. Doble 3 con el corazón del 6.': 'Master number. The rarest and most elevated. Unconditional love expressed as supreme service. Spiritual guide that elevates collective consciousness. Double 3 with the heart of 6.',
+};
+
 export function LangProvider({ children }) {
   const [lang, setLang] = useState('es');
   const t = (key) => DICT[key]?.[lang] || key;
+  const tData = (val) => lang === 'en' && DATA_MAP[val] ? DATA_MAP[val] : val;
   return (
-    <LangContext.Provider value={{ lang, setLang, t }}>
+    <LangContext.Provider value={{ lang, setLang, t, tData }}>
       {children}
     </LangContext.Provider>
   );
