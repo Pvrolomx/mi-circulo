@@ -375,13 +375,13 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           return (
             <details className="bg-white rounded-2xl card-glow">
               <summary className="px-5 pt-5 pb-3 cursor-pointer flex items-center justify-between">
-                <p className="text-sm text-[#8d6e63]">🏆 Top 5 y ⚡ Bottom 5</p>
+                <p className="text-sm text-[#8d6e63]">🏆 Mejores 5 y ⚡ Menores 5</p>
                 <span className="text-xs text-[#c4a882]">▼</span>
               </summary>
               <div className="px-5 pb-5">
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-[#c4a882] mb-2">🏆 Top 5 — Mayor afinidad</p>
+                  <p className="text-xs text-[#c4a882] mb-2">🏆 Mejores 5 — Mayor afinidad</p>
                   <div className="space-y-1.5">
                     {top5.map((p, i) => {
                       const z = getChineseZodiac(p.fecha_nacimiento);
@@ -411,7 +411,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-[#c4a882] mb-2">⚡ Bottom 5 — Menor afinidad</p>
+                  <p className="text-xs text-[#c4a882] mb-2">⚡ Menores 5 — Menor afinidad</p>
                   <div className="space-y-1.5">
                     {bottom5.map((p, i) => {
                       const z = getChineseZodiac(p.fecha_nacimiento);
@@ -461,7 +461,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs opacity-60">Legacy</span>
+                  <span className="text-xs opacity-60">Legado</span>
                   <span className={`text-lg font-black ${legacy.isMaster ? 'text-amber-300' : 'text-white'}`}>
                     {legacy.isMaster ? `☆${legacy.value}` : legacy.value}
                   </span>
