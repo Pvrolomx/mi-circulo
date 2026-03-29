@@ -291,8 +291,12 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
         </div>
 
         {/* Aliados y Enemigos */}
-        <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm text-[#8d6e63] mb-3">Aliados y Opuestos</p>
+        <details className="bg-white rounded-2xl card-glow" open>
+          <summary className="px-5 pt-5 pb-3 cursor-pointer flex items-center justify-between">
+            <p className="text-sm text-[#8d6e63]">Aliados y Opuestos</p>
+            <span className="text-xs text-[#c4a882]">▼</span>
+          </summary>
+          <div className="px-5 pb-5">
 
           {/* Filtro por categoría */}
           <div className="flex flex-wrap gap-1.5 mb-4">
@@ -350,7 +354,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
               </div>
             )}
           </div>
-        </div>
+          </div>
+        </details>
 
         {/* Top 5 Afinidad & Bottom 5 Opuestos */}
         {allPersonas && allPersonas.length > 1 && (() => {
@@ -368,7 +373,12 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           const top5 = scored.slice(0, 5);
           const bottom5 = scored.slice(-5).reverse();
           return (
-            <div className="bg-white rounded-2xl p-5 card-glow">
+            <details className="bg-white rounded-2xl card-glow">
+              <summary className="px-5 pt-5 pb-3 cursor-pointer flex items-center justify-between">
+                <p className="text-sm text-[#8d6e63]">🏆 Top 5 y ⚡ Bottom 5</p>
+                <span className="text-xs text-[#c4a882]">▼</span>
+              </summary>
+              <div className="px-5 pb-5">
               <div className="space-y-4">
                 <div>
                   <p className="text-xs text-[#c4a882] mb-2">🏆 Top 5 — Mayor afinidad</p>
@@ -431,7 +441,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                   </div>
                 </div>
               </div>
-            </div>
+              </div>
+            </details>
           );
         })()}
 
