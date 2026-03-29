@@ -25,7 +25,7 @@ const GROUPS = [
 const getLabel = (item, lang) => lang === 'en' && item.labelEn ? item.labelEn : item.label;
 
 function PersonCard({ persona, onClick }) {
-  const { lang } = useLang();
+  const { lang, tData } = useLang();
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
   const meaning = getLifeNumberMeaning(lifeNum);
@@ -44,7 +44,7 @@ function PersonCard({ persona, onClick }) {
             <h3 className="font-semibold text-[#2d1f0e] truncate">{persona.nombre}</h3>
             <span className="text-xs text-[#c4a882] shrink-0">{birthStr}</span>
           </div>
-          <p className="text-sm text-[#8d6e63]">{zodiac.name} · Nº {lifeNum} {meaning.title}</p>
+          <p className="text-sm text-[#8d6e63]">{tData(zodiac.name)} · Nº {lifeNum} {tData(meaning.title)}</p>
           {persona.nota && <p className="text-xs text-[#c4a882] mt-0.5 truncate italic">"{persona.nota}"</p>}
         </div>
         <span className="text-xs px-2 py-1 rounded-full shrink-0" style={{ background: cat.color + '18', color: cat.color }}>
@@ -143,7 +143,7 @@ function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
 }
 
 function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota, onEdit, allPersonas }) {
-  const { t, lang } = useLang();
+  const { t, lang, tData } = useLang();
   const [relFilter, setRelFilter] = useState('persona');
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const element = getChineseElement(persona.fecha_nacimiento);
@@ -211,8 +211,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           <div className="flex items-center gap-4">
             <span className="text-5xl font-bold text-[#d4a843]">{lifeNum}</span>
             <div>
-              <h3 className="font-bold text-[#2d1f0e]">{meaning.title}</h3>
-              <p className="text-sm text-[#8d6e63] mt-1">{meaning.desc}</p>
+              <h3 className="font-bold text-[#2d1f0e]">{tData(meaning.title)}</h3>
+              <p className="text-sm text-[#8d6e63] mt-1">{tData(meaning.desc)}</p>
             </div>
           </div>
         </div>
@@ -223,8 +223,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           <div className="flex items-center gap-4">
             <span className="text-5xl">{zodiac.emoji}</span>
             <div>
-              <h3 className="font-bold text-[#2d1f0e]">{zodiac.name}</h3>
-              <p className="text-sm text-[#8d6e63] mt-1">{zodiac.traits}</p>
+              <h3 className="font-bold text-[#2d1f0e]">{tData(zodiac.name)}</h3>
+              <p className="text-sm text-[#8d6e63] mt-1">{tData(zodiac.traits)}</p>
               {chineseYear !== gregorianYear && (
                 <p className="text-xs text-[#d4a843] mt-1">⚡ {t('ano_chino_nota')}: {chineseYear} ({t('nacio_antes_lunar')})</p>
               )}
@@ -238,8 +238,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           <div className="flex items-center gap-4">
             <span className="text-4xl">{element.emoji}</span>
             <div>
-              <h3 className="font-bold" style={{ color: element.color }}>{element.name}</h3>
-              <p className="text-sm text-[#8d6e63] mt-1">{element.influence}</p>
+              <h3 className="font-bold" style={{ color: element.color }}>{tData(element.name)}</h3>
+              <p className="text-sm text-[#8d6e63] mt-1">{tData(element.influence)}</p>
             </div>
           </div>
         </div>
@@ -250,8 +250,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           <div className="flex items-center gap-4">
             <span className="text-4xl">{yinYang.emoji}</span>
             <div>
-              <h3 className="font-bold text-[#2d1f0e]">{yinYang.type}</h3>
-              <p className="text-sm text-[#8d6e63] mt-1">{yinYang.desc}</p>
+              <h3 className="font-bold text-[#2d1f0e]">{tData(yinYang.type)}</h3>
+              <p className="text-sm text-[#8d6e63] mt-1">{tData(yinYang.desc)}</p>
             </div>
           </div>
         </div>
@@ -262,8 +262,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
           <div className="flex items-center gap-4">
             <span className="text-4xl">{western.emoji}</span>
             <div>
-              <h3 className="font-bold text-[#2d1f0e]">{western.name}</h3>
-              <p className="text-sm text-[#8d6e63] mt-1">{lang === 'en' ? 'Element' : 'Elemento'}: {western.element} · {western.modality}</p>
+              <h3 className="font-bold text-[#2d1f0e]">{tData(western.name)}</h3>
+              <p className="text-sm text-[#8d6e63] mt-1">{lang === 'en' ? 'Element' : 'Elemento'}: {tData(western.element)} · {tData(western.modality)}</p>
             </div>
           </div>
         </div>
@@ -489,8 +489,8 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                             <span className="text-sm w-5 text-center opacity-50 text-white">{k.pos}</span>
                             <span className="text-base">{k.emoji}</span>
                             <div>
-                              <div className="text-xs font-semibold text-white">{k.name}</div>
-                              <div className="text-[10px] opacity-50 text-white">{k.desc}</div>
+                              <div className="text-xs font-semibold text-white">{tData(k.name)}</div>
+                              <div className="text-[10px] opacity-50 text-white">{tData(k.desc)}</div>
                             </div>
                           </div>
                           <span className={`text-lg font-black min-w-[2.5rem] text-right ${k.isMaster ? 'text-amber-300' : 'text-white/90'}`}>
@@ -500,10 +500,10 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                         {meaning && (
                           <div className="px-3 pb-3 pt-1 border-t border-white/10 mx-2 mb-1">
                             <div className={`text-sm font-bold mb-1 ${k.isMaster ? 'text-amber-300' : 'text-white/90'}`}>
-                              {meaning.title}
+                              {tData(meaning.title)}
                             </div>
-                            <div className="text-[10px] text-amber-200/60 mb-1.5">{meaning.keywords}</div>
-                            <div className="text-xs text-white/70 leading-relaxed">{meaning.desc}</div>
+                            <div className="text-[10px] text-amber-200/60 mb-1.5">{tData(meaning.keywords)}</div>
+                            <div className="text-xs text-white/70 leading-relaxed">{tData(meaning.desc)}</div>
                           </div>
                         )}
                       </details>
@@ -1069,13 +1069,13 @@ function GroupCompareView({ personas, onBack }) {
             <div className="flex gap-2 mb-3 overflow-x-auto">
               <button onClick={() => setGroupFilter('all')}
                 className={`px-3 py-1 rounded-full text-xs whitespace-nowrap ${groupFilter === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-[#faf5eb] text-[#8d6e63]'}`}>
-                Todos
+                {t('todos')}
               </button>
               {GROUPS.map(g => (
                 <button key={g.value} onClick={() => setGroupFilter(g.value)}
                   className={`px-3 py-1 rounded-full text-xs whitespace-nowrap ${groupFilter === g.value ? 'text-white' : 'bg-[#faf5eb] text-[#8d6e63]'}`}
                   style={groupFilter === g.value ? { backgroundColor: g.color } : {}}>
-                  {g.label}
+                  {getLabel(g, lang)}
                 </button>
               ))}
             </div>
