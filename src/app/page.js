@@ -1272,6 +1272,7 @@ export default function Home() {
   const [filterNumber, setFilterNumber] = useState('all');
   const [showNumberFilter, setShowNumberFilter] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
+  const [showIOSInstall, setShowIOSInstall] = useState(false);
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
@@ -1281,6 +1282,13 @@ export default function Home() {
     }
     const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
     window.addEventListener('beforeinstallprompt', handler);
+
+    // Detectar iOS que no está ya instalado como PWA
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    if (isIOS && !isStandalone) {
+      setShowIOSInstall(true);
+    }
 
     // Realtime: escuchar cambios de otro dispositivo
     const unsubscribe = subscribeToChanges(
@@ -1455,7 +1463,12 @@ export default function Home() {
             <LangToggle />
             {installPrompt && (
               <button onClick={handleInstall} className="text-xs px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20">
-                📲 Instalar
+                🦋 {lang === 'en' ? 'Install' : 'Instalar'}
+              </button>
+            )}
+            {showIOSInstall && (
+              <button onClick={() => setShowIOSInstall('banner')} className="text-xs px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20">
+                🦋 {lang === 'en' ? 'Install' : 'Instalar'}
               </button>
             )}
           </div>
@@ -1597,6 +1610,35 @@ export default function Home() {
       </div>
 
       {showAdd && <AddPersonForm onSave={handleAdd} onCancel={() => setShowAdd(false)} />}
+
+      {showIOSInstall === 'banner' && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
+          <div className="bg-[#faf5eb] w-full rounded-t-3xl p-6 pb-10">
+            <div className="text-center mb-4">
+              <span className="text-4xl">🦋</span>
+              <h3 className="text-lg font-bold text-[#2d1f0e] mt-2">{lang === 'en' ? 'Install Mi Círculo' : 'Instalar Mi Círculo'}</h3>
+            </div>
+            <div className="space-y-3 text-sm text-[#8d6e63]">
+              <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl">
+                <span className="text-xl">1️⃣</span>
+                <span>{lang === 'en' ? 'Tap the share button' : 'Toca el botón compartir'} <span className="inline-block text-lg align-middle">⬆️</span> {lang === 'en' ? 'at the bottom of Safari' : 'en la parte inferior de Safari'}</span>
+              </div>
+              <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl">
+                <span className="text-xl">2️⃣</span>
+                <span>{lang === 'en' ? 'Scroll down and tap' : 'Baja y selecciona'} <strong>"{lang === 'en' ? 'Add to Home Screen' : 'Agregar a inicio'}"</strong></span>
+              </div>
+              <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl">
+                <span className="text-xl">3️⃣</span>
+                <span>{lang === 'en' ? 'Tap' : 'Toca'} <strong>"{lang === 'en' ? 'Add' : 'Agregar'}"</strong> — {lang === 'en' ? 'and done!' : '¡y listo!'} 🦋</span>
+              </div>
+            </div>
+            <button onClick={() => setShowIOSInstall(false)}
+              className="w-full mt-4 py-3 rounded-xl gradient-mystic text-white font-medium">
+              {lang === 'en' ? 'Got it!' : '¡Entendido!'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
