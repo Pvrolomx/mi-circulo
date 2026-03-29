@@ -528,6 +528,7 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 }
 
 function CompareView({ person1, person2, onBack }) {
+  const { t, lang } = useLang();
   const [showFull, setShowFull] = useState(false);
   const compat = calcCompatibility(person1, person2);
   const z1 = getChineseZodiac(person1.fecha_nacimiento);
@@ -573,20 +574,20 @@ function CompareView({ person1, person2, onBack }) {
 
       <div className="px-4 -mt-4 space-y-4 pb-8">
         <div className="bg-white rounded-2xl p-6 card-glow text-center">
-          <p className="text-sm text-[#8d6e63] mb-2">Compatibilidad General</p>
+          <p className="text-sm text-[#8d6e63] mb-2">{t('compatibilidad_general')}</p>
           <div className="text-6xl font-bold" style={{
             color: compat.overall >= 7 ? '#2e7d32' : compat.overall >= 5 ? '#d4a843' : '#c62828'
           }}>{compat.overall}</div>
-          <p className="text-[#8d6e63] text-sm mt-1">de 10</p>
+          <p className="text-[#8d6e63] text-sm mt-1">{t('de_10')}</p>
         </div>
 
         <div className="bg-white rounded-2xl p-5 card-glow space-y-4">
-          <ScoreBar label="🐲 Zodiaco Chino" score={compat.zodiacScore} />
-          <ScoreBar label="🔢 Numerología" score={compat.numScore} />
+          <ScoreBar label={t('chino_label')} score={compat.zodiacScore} />
+          <ScoreBar label={t('numerologia_label')} score={compat.numScore} />
         </div>
 
         <div className="bg-white rounded-2xl p-5 card-glow">
-          <p className="text-sm font-semibold text-[#2d1f0e] mb-3">✨ Consejos</p>
+          <p className="text-sm font-semibold text-[#2d1f0e] mb-3">{t('consejos')}</p>
           <div className="space-y-2">
             {compat.tips.map((tip, i) => (
               <p key={i} className="text-sm text-[#8d6e63]">• {tip}</p>
@@ -598,12 +599,12 @@ function CompareView({ person1, person2, onBack }) {
         {!showFull ? (
           <button onClick={() => setShowFull(true)}
             className="w-full py-3 rounded-2xl border border-[#d4a843] text-[#d4a843] text-sm font-medium hover:bg-[#d4a843]/10 transition-all">
-            🔮 Ver compatibilidad en 4 tradiciones
+            🔮 {t('compatibilidad_4trad')}
           </button>
         ) : fullCompat && (
           <div className="bg-white rounded-2xl p-5 card-glow space-y-4">
             <div className="text-center mb-2">
-              <p className="text-xs text-[#c4a882]">Compatibilidad 4 Tradiciones</p>
+              <p className="text-xs text-[#c4a882]">{t('compatibilidad_4trad')}</p>
               <p className="text-3xl font-bold" style={{
                 color: fullCompat.overall >= 7 ? '#2e7d32' : fullCompat.overall >= 5 ? '#d4a843' : '#c62828'
               }}>{fullCompat.overall}<span className="text-sm text-[#8d6e63] font-normal">/10</span></p>
@@ -612,7 +613,6 @@ function CompareView({ person1, person2, onBack }) {
             {/* Radar Chart */}
             <div className="flex justify-center">
               <svg viewBox="0 0 200 200" width="220" height="220">
-                {/* Background grid */}
                 {[0.25, 0.5, 0.75, 1].map((scale, i) => {
                   const r = 70 * scale;
                   const points = [0, 1, 2, 3].map(j => {
@@ -621,12 +621,10 @@ function CompareView({ person1, person2, onBack }) {
                   }).join(' ');
                   return <polygon key={i} points={points} fill="none" stroke="#f0e6d3" strokeWidth={i === 3 ? 1.5 : 0.5} />;
                 })}
-                {/* Axis lines */}
                 {[0, 1, 2, 3].map(j => {
                   const angle = (Math.PI / 2) * j - Math.PI / 2;
                   return <line key={j} x1="100" y1="100" x2={100 + 70 * Math.cos(angle)} y2={100 + 70 * Math.sin(angle)} stroke="#f0e6d3" strokeWidth="0.5" />;
                 })}
-                {/* Data polygon */}
                 {(() => {
                   const scores = [fullCompat.chinese.score, fullCompat.western.score, fullCompat.vedic.score, fullCompat.numerology.score];
                   const points = scores.map((s, j) => {
@@ -645,20 +643,19 @@ function CompareView({ person1, person2, onBack }) {
                     </>
                   );
                 })()}
-                {/* Labels */}
-                <text x="100" y="18" textAnchor="middle" fontSize="11" fill="#8d6e63">🐲 Chino</text>
-                <text x="185" y="104" textAnchor="start" fontSize="11" fill="#8d6e63">♈ Occ.</text>
-                <text x="100" y="192" textAnchor="middle" fontSize="11" fill="#8d6e63">🪷 Védico</text>
-                <text x="15" y="104" textAnchor="end" fontSize="11" fill="#8d6e63">🔢 Num.</text>
+                <text x="100" y="18" textAnchor="middle" fontSize="11" fill="#8d6e63">{t('chino_label')}</text>
+                <text x="185" y="104" textAnchor="start" fontSize="11" fill="#8d6e63">{t('occ_short')}</text>
+                <text x="100" y="192" textAnchor="middle" fontSize="11" fill="#8d6e63">{t('vedico_label')}</text>
+                <text x="15" y="104" textAnchor="end" fontSize="11" fill="#8d6e63">{t('num_short')}</text>
               </svg>
             </div>
 
-            <ScoreBar label={`🐲 Chino — ${fullCompat.chinese.zodiac1.name} + ${fullCompat.chinese.zodiac2.name}`} score={fullCompat.chinese.score} />
-            <ScoreBar label={`${fullCompat.western.sign1.emoji} Occidental — ${fullCompat.western.sign1.name} + ${fullCompat.western.sign2.name}`} score={fullCompat.western.score} />
-            <ScoreBar label={`🪷 Védico — ${fullCompat.vedic.nakshatra1.name} + ${fullCompat.vedic.nakshatra2.name}`} score={fullCompat.vedic.score} />
-            <ScoreBar label={`🔢 Numerología — ${fullCompat.numerology.num1} + ${fullCompat.numerology.num2}`} score={fullCompat.numerology.score} />
+            <ScoreBar label={`${t('chino_label')} — ${fullCompat.chinese.zodiac1.name} + ${fullCompat.chinese.zodiac2.name}`} score={fullCompat.chinese.score} />
+            <ScoreBar label={`${fullCompat.western.sign1.emoji} ${lang === 'en' ? 'Western' : 'Occidental'} — ${fullCompat.western.sign1.name} + ${fullCompat.western.sign2.name}`} score={fullCompat.western.score} />
+            <ScoreBar label={`${t('vedico_label')} — ${fullCompat.vedic.nakshatra1.name} + ${fullCompat.vedic.nakshatra2.name}`} score={fullCompat.vedic.score} />
+            <ScoreBar label={`${t('numerologia_label')} — ${fullCompat.numerology.num1} + ${fullCompat.numerology.num2}`} score={fullCompat.numerology.score} />
 
-            <p className="text-xs text-[#c4a882] text-center mt-2">Védico aproximado sin hora de nacimiento</p>
+            <p className="text-xs text-[#c4a882] text-center mt-2">{t('vedico_aprox')}</p>
           </div>
         )}
       </div>
@@ -667,6 +664,7 @@ function CompareView({ person1, person2, onBack }) {
 }
 
 function CompareSelector({ personas, current, onSelect, onCancel }) {
+  const { t, lang } = useLang();
   const [compareGroup, setCompareGroup] = useState('persona');
   const [compareSearch, setCompareSearch] = useState('');
   const others = personas.filter(p => {
@@ -677,11 +675,11 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
     }
     if (compareSearch && !p.nombre.toLowerCase().includes(compareSearch.toLowerCase())) return false;
     return true;
-  }).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+  }).sort((a, b) => a.nombre.localeCompare(b.nombre, lang === 'en' ? 'en' : 'es'));
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center">
       <div className="bg-[#faf5eb] w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 max-h-[80vh] flex flex-col">
-        <h2 className="text-xl font-bold text-[#2d1f0e] mb-3">Comparar {current.nombre} con...</h2>
+        <h2 className="text-xl font-bold text-[#2d1f0e] mb-3">{lang === 'en' ? `Compare ${current.nombre} with...` : `Comparar ${current.nombre} con...`}</h2>
         <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1">
           {GROUPS.map(g => {
             const count = personas.filter(p => p.id !== current.id && g.cats.includes(p.categoria)).length;
@@ -689,21 +687,21 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
               <button key={g.value} onClick={() => setCompareGroup(g.value)}
                 className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${compareGroup === g.value ? 'text-white' : 'bg-white border border-[#f0e6d3]'}`}
                 style={compareGroup === g.value ? { background: g.color } : { color: g.color }}>
-                {g.label} ({count})
+                {getLabel(g, lang)} ({count})
               </button>
             );
           })}
           <button onClick={() => setCompareGroup('all')}
             className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${compareGroup === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
-            Todos
+            {t('todos')}
           </button>
         </div>
         <input type="text" value={compareSearch} onChange={e => setCompareSearch(e.target.value)}
           className="w-full px-4 py-2 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e] text-sm mb-3"
-          placeholder="🔍 Buscar..." />
+          placeholder={`🔍 ${t('buscar')}`} />
         <div className="overflow-auto flex-1">
           {others.length === 0 ? (
-            <p className="text-[#8d6e63] text-center py-8">Sin resultados</p>
+            <p className="text-[#8d6e63] text-center py-8">{t('sin_resultados')}</p>
           ) : (
             <div className="space-y-1">
               {others.map(p => {
@@ -714,7 +712,7 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
                     <span className="text-2xl">{z.emoji}</span>
                     <div className="flex-1 text-left min-w-0">
                       <span className="font-medium text-[#2d1f0e] truncate block">{p.nombre}</span>
-                      {cat && <span className="text-xs" style={{ color: cat.color }}>{cat.label}</span>}
+                      {cat && <span className="text-xs" style={{ color: cat.color }}>{getLabel(cat, lang)}</span>}
                     </div>
                   </button>
                 );
@@ -722,7 +720,7 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
             </div>
           )}
         </div>
-        <button onClick={onCancel} className="w-full mt-3 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63]">Cancelar</button>
+        <button onClick={onCancel} className="w-full mt-3 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63]">{t('cancelar')}</button>
       </div>
     </div>
   );
@@ -748,6 +746,7 @@ function NoteEditor({ currentNote, onSave, onCancel }) {
 }
 
 function AffinityMap({ personas, onBack, onSelectPerson }) {
+  const { t, lang } = useLang();
   const [filterCat, setFilterCat] = useState('all');
 
   const filtered = filterCat === 'all' ? personas : personas.filter(p => {
@@ -763,10 +762,10 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
   });
 
   const triangles = [
-    { animals: ['Rata', 'Dragón', 'Mono'], label: 'Acción', color: '#c62828' },
-    { animals: ['Buey', 'Serpiente', 'Gallo'], label: 'Intelecto', color: '#1565c0' },
-    { animals: ['Tigre', 'Caballo', 'Perro'], label: 'Coraje', color: '#2e7d32' },
-    { animals: ['Conejo', 'Cabra', 'Cerdo'], label: 'Diplomacia', color: '#7b1fa2' },
+    { animals: ['Rata', 'Dragón', 'Mono'], label: t('accion'), color: '#c62828' },
+    { animals: ['Buey', 'Serpiente', 'Gallo'], label: t('intelecto'), color: '#1565c0' },
+    { animals: ['Tigre', 'Caballo', 'Perro'], label: t('coraje'), color: '#2e7d32' },
+    { animals: ['Conejo', 'Cabra', 'Cerdo'], label: t('diplomacia'), color: '#7b1fa2' },
   ];
 
   const opposites = [
@@ -782,21 +781,21 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
         <div className="flex items-center gap-3 mb-4">
           <button onClick={onBack} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">←</button>
           <div>
-            <h1 className="text-xl font-bold">Mapa de Afinidades</h1>
-            <p className="text-white/60 text-sm">Aliados y opuestos en tu círculo</p>
+            <h1 className="text-xl font-bold">{t('mapa_afinidades')}</h1>
+            <p className="text-white/60 text-sm">{t('aliados_opp_circulo')}</p>
           </div>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1 mt-2">
           <button onClick={() => setFilterCat('all')}
             className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${filterCat === 'all' ? 'bg-white text-[#2d1f0e] font-semibold' : 'bg-white/10 text-white/70'}`}>
-            Todos ({personas.length})
+            {t('todos')} ({personas.length})
           </button>
           {GROUPS.map(g => {
             const count = personas.filter(p => g.cats.includes(p.categoria)).length;
             return (
               <button key={g.value} onClick={() => setFilterCat(g.value)}
                 className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${filterCat === g.value ? 'bg-white text-[#2d1f0e] font-semibold' : 'bg-white/10 text-white/70'}`}>
-                {g.label} ({count})
+                {getLabel(g, lang)} ({count})
               </button>
             );
           })}
@@ -807,14 +806,14 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
         {filtered.length === 0 ? (
           <div className="bg-white rounded-2xl p-8 card-glow text-center">
             <p className="text-4xl mb-3">🔮</p>
-            <p className="text-[#8d6e63]">No hay personas en esta categoría</p>
+            <p className="text-[#8d6e63]">{t('no_personas_cat')}</p>
           </div>
         ) : (
           <>
             {/* Triangles */}
             <div className="bg-white rounded-2xl p-5 card-glow">
-              <p className="text-sm font-semibold text-[#2d1f0e] mb-1">🤝 Triángulos de Afinidad</p>
-              <p className="text-xs text-[#c4a882] mb-4">Los 3 signos de cada triángulo son aliados naturales</p>
+              <p className="text-sm font-semibold text-[#2d1f0e] mb-1">{t('triangulos_afinidad')}</p>
+              <p className="text-xs text-[#c4a882] mb-4">{t('triangulos_desc')}</p>
           <div className="space-y-4">
             {triangles.map(tri => {
               const hasAny = tri.animals.some(a => (personsByAnimal[a]?.length || 0) > 0);
@@ -855,7 +854,7 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
         {/* Opposites */}
         <div className="bg-white rounded-2xl p-5 card-glow">
           <p className="text-sm font-semibold text-[#2d1f0e] mb-1">⚡ Pares Opuestos</p>
-          <p className="text-xs text-[#c4a882] mb-4">Signos que se desafían mutuamente — requieren paciencia</p>
+          <p className="text-xs text-[#c4a882] mb-4">{t('pares_opp_desc')}</p>
           <div className="space-y-3">
             {opposites.map(([a1, a2]) => {
               const p1 = personsByAnimal[a1] || [];
@@ -938,16 +937,16 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
           return (
             <>
               <div className="bg-white rounded-2xl p-5 card-glow">
-                <p className="text-sm font-semibold text-[#2d1f0e] mb-1">💚 Top 10 Afinidades</p>
-                <p className="text-xs text-[#c4a882] mb-3">Pares con mayor compatibilidad</p>
+                <p className="text-sm font-semibold text-[#2d1f0e] mb-1">{t('top10_afinidades')}</p>
+                <p className="text-xs text-[#c4a882] mb-3">{t('top10_afinidades_sub')}</p>
                 <div className="divide-y divide-[#f0e6d3]">
                   {globalTop.map((pair, i) => <PairRow key={`t-${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl p-5 card-glow">
-                <p className="text-sm font-semibold text-[#2d1f0e] mb-1">⚡ Top 10 Opuestos</p>
-                <p className="text-xs text-[#c4a882] mb-3">Pares que requieren más paciencia</p>
+                <p className="text-sm font-semibold text-[#2d1f0e] mb-1">{t('top10_opuestos')}</p>
+                <p className="text-xs text-[#c4a882] mb-3">{t('top10_opuestos_sub')}</p>
                 <div className="divide-y divide-[#f0e6d3]">
                   {globalBottom.map((pair, i) => <PairRow key={`b-${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
                 </div>
@@ -956,14 +955,14 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
               {catGroups.length > 0 && catGroups.map(({ cat, top, bottom }) => (
                 <div key={cat.value} className="bg-white rounded-2xl p-5 card-glow">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full text-white" style={{ background: cat.color }}>{cat.label}</span>
-                    <span className="text-xs text-[#c4a882]">Rankings internos</span>
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full text-white" style={{ background: cat.color }}>{getLabel(cat, lang)}</span>
+                    <span className="text-xs text-[#c4a882]">{t('rankings_internos')}</span>
                   </div>
-                  <p className="text-xs font-medium text-[#2e7d32] mb-2">💚 Top 5 Afinidades</p>
+                  <p className="text-xs font-medium text-[#2e7d32] mb-2">{t('top5_afinidades')}</p>
                   <div className="divide-y divide-[#f0e6d3] mb-4">
                     {top.map((pair, i) => <PairRow key={`ct-${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
                   </div>
-                  <p className="text-xs font-medium text-[#c62828] mb-2">⚡ Top 5 Opuestos</p>
+                  <p className="text-xs font-medium text-[#c62828] mb-2">{t('top5_opuestos')}</p>
                   <div className="divide-y divide-[#f0e6d3]">
                     {bottom.map((pair, i) => <PairRow key={`cb-${pair.p1.id}-${pair.p2.id}`} pair={pair} rank={i + 1} />)}
                   </div>
@@ -980,6 +979,7 @@ function AffinityMap({ personas, onBack, onSelectPerson }) {
 }
 
 function GroupCompareView({ personas, onBack }) {
+  const { t, lang } = useLang();
   const [groupMembers, setGroupMembers] = useState([]);
   const [searchGroup, setSearchGroup] = useState('');
   const [groupFilter, setGroupFilter] = useState('all');
@@ -992,7 +992,7 @@ function GroupCompareView({ personas, onBack }) {
       if (g && !g.cats.includes(p.categoria)) return false;
     }
     return true;
-  }).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+  }).sort((a, b) => a.nombre.localeCompare(b.nombre, lang === 'en' ? 'en' : 'es'));
 
   const addMember = (p) => { if (groupMembers.length < 6) setGroupMembers([...groupMembers, p]); };
   const removeMember = (id) => setGroupMembers(groupMembers.filter(m => m.id !== id));
@@ -1037,9 +1037,9 @@ function GroupCompareView({ personas, onBack }) {
       <div className="gradient-mystic text-white p-6 pb-8 rounded-b-3xl">
         <div className="flex items-center gap-3 mb-4">
           <button onClick={onBack} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">←</button>
-          <h1 className="text-xl font-bold">👥 Compatibilidad Grupal</h1>
+          <h1 className="text-xl font-bold">{t('compat_grupal')}</h1>
         </div>
-        <p className="text-white/60 text-sm">Selecciona 3-6 personas para analizar como equipo</p>
+        <p className="text-white/60 text-sm">{t('selecciona_3_6')}</p>
       </div>
 
       <div className="px-4 -mt-4 space-y-4 pb-24">
@@ -1047,7 +1047,7 @@ function GroupCompareView({ personas, onBack }) {
         <div className="bg-white rounded-2xl p-4 card-glow">
           <p className="text-xs text-[#c4a882] mb-2">Equipo ({groupMembers.length}/6)</p>
           {groupMembers.length === 0 ? (
-            <p className="text-sm text-[#c4a882] italic">Agrega personas desde la lista de abajo</p>
+            <p className="text-sm text-[#c4a882] italic">{t('agrega_personas_lista')}</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {groupMembers.map(m => {
@@ -1080,7 +1080,7 @@ function GroupCompareView({ personas, onBack }) {
               ))}
             </div>
             <input type="text" value={searchGroup} onChange={e => setSearchGroup(e.target.value)}
-              placeholder="Buscar..." className="w-full px-4 py-2 rounded-xl bg-[#faf5eb] text-sm mb-3 outline-none" />
+              placeholder={t('buscar')} className="w-full px-4 py-2 rounded-xl bg-[#faf5eb] text-sm mb-3 outline-none" />
             <div className="max-h-48 overflow-y-auto space-y-1">
               {available.slice(0, 20).map(p => {
                 const z = getChineseZodiac(p.fecha_nacimiento);
@@ -1101,7 +1101,7 @@ function GroupCompareView({ personas, onBack }) {
           <>
             {/* Score general */}
             <div className="bg-white rounded-2xl p-5 card-glow text-center">
-              <p className="text-xs text-[#c4a882] mb-2">Compatibilidad del Equipo</p>
+              <p className="text-xs text-[#c4a882] mb-2">{t('compat_equipo')}</p>
               <span className={`text-5xl font-bold ${avgScore >= 7 ? 'text-green-600' : avgScore >= 5 ? 'text-[#d4a843]' : 'text-red-600'}`}>
                 {avgScore.toFixed(1)}
               </span>
@@ -1112,7 +1112,7 @@ function GroupCompareView({ personas, onBack }) {
 
             {/* Insights */}
             <div className="bg-white rounded-2xl p-5 card-glow">
-              <p className="text-sm text-[#8d6e63] mb-3">🔮 Insights del Equipo</p>
+              <p className="text-sm text-[#8d6e63] mb-3">{t('insights_equipo')}</p>
               <div className="space-y-2 text-sm">
                 {triangleGroups.length > 0 && (
                   <div className="px-3 py-2 rounded-xl bg-green-50 text-green-700">
@@ -1152,7 +1152,7 @@ function GroupCompareView({ personas, onBack }) {
 
             {/* Tabla de pares */}
             <div className="bg-white rounded-2xl p-5 card-glow">
-              <p className="text-sm text-[#8d6e63] mb-3">📊 Todos los Pares</p>
+              <p className="text-sm text-[#8d6e63] mb-3">{t('todos_pares')}</p>
               <div className="space-y-1.5">
                 {pairs.sort((a, b) => b.score - a.score).map((pair, i) => {
                   const z1 = getChineseZodiac(pair.p1.fecha_nacimiento);
@@ -1188,7 +1188,7 @@ function GroupCompareView({ personas, onBack }) {
 
         {groupMembers.length > 0 && groupMembers.length < 3 && (
           <div className="text-center py-8">
-            <p className="text-[#c4a882] text-sm">Selecciona al menos 3 personas para ver el análisis</p>
+            <p className="text-[#c4a882] text-sm">{t('selecciona_min3')}</p>
           </div>
         )}
       </div>
