@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES, calcKairosFlow, KAIROS_MEANINGS } from '@/lib/numerology';
+import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES, calcKairosFlow, calcKairosFlowMaster, KAIROS_MEANINGS, calcPersonalYear, PERSONAL_YEAR_MEANINGS } from '@/lib/numerology';
 import { getPersonas, addPersona, updatePersona, deletePersona, subscribeToChanges } from '@/lib/supabase';
 import { LangToggle, useLang } from '@/lib/i18n';
 
@@ -145,6 +145,7 @@ function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
 function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory, onEditNota, onEdit, allPersonas }) {
   const { t, lang, tData } = useLang();
   const [relFilter, setRelFilter] = useState('persona');
+  const [kairosMode, setKairosMode] = useState('basica');
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const element = getChineseElement(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
@@ -458,8 +459,11 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
 
         {/* Kairos Flow — solo para personas */}
         {['familia','amigo','cliente','conocido'].includes(persona.categoria) && (() => {
-          const kairos = calcKairosFlow(persona.fecha_nacimiento);
+          const kairos = kairosMode === 'master' ? calcKairosFlowMaster(persona.fecha_nacimiento) : calcKairosFlow(persona.fecha_nacimiento);
           const legacy = kairos[8];
+          const currentYear = new Date().getFullYear();
+          const personalYear = calcPersonalYear(persona.fecha_nacimiento, currentYear);
+          const pyMeaning = PERSONAL_YEAR_MEANINGS[personalYear];
           return (
             <details className="rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}>
               <summary className="px-5 py-4 cursor-pointer flex items-center justify-between text-white">
@@ -479,9 +483,20 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                 </div>
               </summary>
               <div className="px-4 pb-4">
+                {/* Toggle Básica / Master */}
+                <div className="flex gap-2 mb-3">
+                  <button onClick={(e) => { e.preventDefault(); setKairosMode('basica'); }}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-all ${kairosMode === 'basica' ? 'bg-white/20 text-white' : 'bg-white/5 text-white/40'}`}>
+                    📐 {lang === 'en' ? 'Structural' : 'Estructural'}
+                  </button>
+                  <button onClick={(e) => { e.preventDefault(); setKairosMode('master'); }}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-all ${kairosMode === 'master' ? 'bg-amber-400/30 text-amber-300 border border-amber-400/30' : 'bg-white/5 text-white/40'}`}>
+                    ✨ Master Edition
+                  </button>
+                </div>
                 <div className="grid gap-1.5">
                   {kairos.map(k => {
-                    const meaning = KAIROS_MEANINGS[k.value] || KAIROS_MEANINGS[k.value > 9 ? k.value : k.value];
+                    const meaning = KAIROS_MEANINGS[k.value];
                     return (
                       <details key={k.pos} className={`rounded-xl ${k.pos === 9 ? 'bg-white/15 border border-amber-400/30' : 'bg-white/8'}`}>
                         <summary className="flex items-center justify-between px-3 py-2 cursor-pointer">
@@ -509,6 +524,22 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                       </details>
                     );
                   })}
+                </div>
+                {/* Año Personal */}
+                <div className="mt-3 px-3 py-2.5 rounded-xl bg-white/10 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">🔄</span>
+                    <div>
+                      <div className="text-xs font-semibold text-white">{lang === 'en' ? 'Personal Year' : 'Año Personal'} {currentYear}</div>
+                      <div className="text-[10px] text-white/50">{pyMeaning ? tData(pyMeaning.desc) : ''}</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-lg font-black ${personalYear > 9 ? 'text-amber-300' : 'text-white/90'}`}>
+                      {personalYear > 9 ? `☆${personalYear}` : personalYear}
+                    </span>
+                    <div className="text-[10px] text-amber-200/60">{pyMeaning ? tData(pyMeaning.title) : ''}</div>
+                  </div>
                 </div>
                 <div className="mt-3 text-center text-[10px] text-white/30">
                   {t('kairos_footer')}
