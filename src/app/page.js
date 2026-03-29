@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES } from '@/lib/numerology';
+import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES, calcKairosFlow } from '@/lib/numerology';
 import { getPersonas, addPersona, updatePersona, deletePersona, subscribeToChanges } from '@/lib/supabase';
 
 const CATEGORIES = [
@@ -432,6 +432,54 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
                 </div>
               </div>
             </div>
+          );
+        })()}
+
+        {/* Kairos Flow — solo para personas */}
+        {['familia','amigo','cliente','conocido'].includes(persona.categoria) && (() => {
+          const kairos = calcKairosFlow(persona.fecha_nacimiento);
+          const legacy = kairos[8];
+          return (
+            <details className="rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}>
+              <summary className="px-5 py-4 cursor-pointer flex items-center justify-between text-white">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">🔱</span>
+                  <div>
+                    <div className="font-bold text-sm">Kairos Flow</div>
+                    <div className="text-xs opacity-70">9 posiciones numerológicas</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs opacity-60">Legacy</span>
+                  <span className={`text-lg font-black ${legacy.isMaster ? 'text-amber-300' : 'text-white'}`}>
+                    {legacy.isMaster ? `☆${legacy.value}` : legacy.value}
+                  </span>
+                  <span className="text-xs opacity-40 ml-1">▼</span>
+                </div>
+              </summary>
+              <div className="px-4 pb-4">
+                <div className="grid gap-1.5">
+                  {kairos.map(k => (
+                    <div key={k.pos} className={`flex items-center justify-between px-3 py-2 rounded-xl ${k.pos === 9 ? 'bg-white/15 border border-amber-400/30' : 'bg-white/8'}`}>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm w-5 text-center opacity-50 text-white">{k.pos}</span>
+                        <span className="text-base">{k.emoji}</span>
+                        <div>
+                          <div className="text-xs font-semibold text-white">{k.name}</div>
+                          <div className="text-[10px] opacity-50 text-white">{k.desc}</div>
+                        </div>
+                      </div>
+                      <span className={`text-lg font-black min-w-[2.5rem] text-right ${k.isMaster ? 'text-amber-300' : 'text-white/90'}`}>
+                        {k.isMaster ? `☆${k.value}` : k.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 text-center text-[10px] text-white/30">
+                  Kairos Flow · Basado en fecha de nacimiento · Números maestros (11, 22, 33) no se reducen
+                </div>
+              </div>
+            </details>
           );
         })()}
 
@@ -1448,4 +1496,5 @@ export default function Home() {
     </div>
   );
 }
+
 
