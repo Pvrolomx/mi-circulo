@@ -312,7 +312,14 @@ const DATA_MAP = {
   'Visionario, inspirador, iluminado. Canal de energía superior.': 'Visionary, inspiring, enlightened. Channel of higher energy.',
   'Visionario práctico. Transforma sueños grandes en realidad.': 'Practical visionary. Transforms big dreams into reality.',
   'Amor incondicional, servicio supremo. Eleva la consciencia colectiva.': 'Unconditional love, supreme service. Elevates collective consciousness.',
-  // Kairos positions
+  // Kairos positions — Básica (Estructural)
+  'El Origen': 'The Origin', 'El Impulsor': 'The Driver', 'El Puente': 'The Bridge',
+  'La Corona': 'The Crown', 'El Ancla': 'The Anchor', 'El Catalizador': 'The Catalyst',
+  'La Expresión': 'The Expression', 'La Cosecha': 'The Harvest',
+  'Talento innato': 'Innate talent', 'Motivación': 'Motivation', 'Crecimiento': 'Growth',
+  'Propósito': 'Purpose', 'Estabilidad': 'Stability', 'Cambio': 'Change',
+  'Imagen': 'Image', 'Resultado final': 'Final result',
+  // Kairos positions — Master Edition
   'La Máscara': 'The Mask', 'El Corazón': 'The Heart', 'El Don': 'The Gift',
   'La Herramienta': 'The Tool', 'El Alma': 'The Soul', 'El Camino': 'The Path',
   'El Llamado': 'The Calling', 'La Sombra': 'The Shadow', 'El Legado': 'The Legacy',
