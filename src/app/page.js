@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES, calcKairosFlow } from '@/lib/numerology';
+import { calcLifeNumber, getLifeNumberMeaning, getChineseZodiac, getChineseElement, calcCompatibility, getChineseYear_export, ZODIAC_ANIMALS, calcFullCompatibility, getWesternSign, getNakshatra, getYinYang, calcSoulNumber, calcDestinyNumber, getAllies, getEnemy, matchRelationships, LIFE_NUMBER_MEANINGS, AFFINITY_TRIANGLES, OPPOSITES, calcKairosFlow, KAIROS_MEANINGS } from '@/lib/numerology';
 import { getPersonas, addPersona, updatePersona, deletePersona, subscribeToChanges } from '@/lib/supabase';
 
 const CATEGORIES = [
@@ -459,21 +459,35 @@ function PersonProfile({ persona, onBack, onCompare, onDelete, onChangeCategory,
               </summary>
               <div className="px-4 pb-4">
                 <div className="grid gap-1.5">
-                  {kairos.map(k => (
-                    <div key={k.pos} className={`flex items-center justify-between px-3 py-2 rounded-xl ${k.pos === 9 ? 'bg-white/15 border border-amber-400/30' : 'bg-white/8'}`}>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm w-5 text-center opacity-50 text-white">{k.pos}</span>
-                        <span className="text-base">{k.emoji}</span>
-                        <div>
-                          <div className="text-xs font-semibold text-white">{k.name}</div>
-                          <div className="text-[10px] opacity-50 text-white">{k.desc}</div>
-                        </div>
-                      </div>
-                      <span className={`text-lg font-black min-w-[2.5rem] text-right ${k.isMaster ? 'text-amber-300' : 'text-white/90'}`}>
-                        {k.isMaster ? `☆${k.value}` : k.value}
-                      </span>
-                    </div>
-                  ))}
+                  {kairos.map(k => {
+                    const meaning = KAIROS_MEANINGS[k.value] || KAIROS_MEANINGS[k.value > 9 ? k.value : k.value];
+                    return (
+                      <details key={k.pos} className={`rounded-xl ${k.pos === 9 ? 'bg-white/15 border border-amber-400/30' : 'bg-white/8'}`}>
+                        <summary className="flex items-center justify-between px-3 py-2 cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm w-5 text-center opacity-50 text-white">{k.pos}</span>
+                            <span className="text-base">{k.emoji}</span>
+                            <div>
+                              <div className="text-xs font-semibold text-white">{k.name}</div>
+                              <div className="text-[10px] opacity-50 text-white">{k.desc}</div>
+                            </div>
+                          </div>
+                          <span className={`text-lg font-black min-w-[2.5rem] text-right ${k.isMaster ? 'text-amber-300' : 'text-white/90'}`}>
+                            {k.isMaster ? `☆${k.value}` : k.value}
+                          </span>
+                        </summary>
+                        {meaning && (
+                          <div className="px-3 pb-3 pt-1 border-t border-white/10 mx-2 mb-1">
+                            <div className={`text-sm font-bold mb-1 ${k.isMaster ? 'text-amber-300' : 'text-white/90'}`}>
+                              {meaning.title}
+                            </div>
+                            <div className="text-[10px] text-amber-200/60 mb-1.5">{meaning.keywords}</div>
+                            <div className="text-xs text-white/70 leading-relaxed">{meaning.desc}</div>
+                          </div>
+                        )}
+                      </details>
+                    );
+                  })}
                 </div>
                 <div className="mt-3 text-center text-[10px] text-white/30">
                   Kairos Flow · Basado en fecha de nacimiento · Números maestros (11, 22, 33) no se reducen
