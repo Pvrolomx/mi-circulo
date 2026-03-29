@@ -400,6 +400,21 @@ const KAIROS_POSITIONS = [
   { pos: 9, name: 'The Legacy', desc: 'Legado final', emoji: '👑' },
 ];
 
+const KAIROS_MEANINGS = {
+  1: { title: 'El Pionero', keywords: 'Liderazgo · Independencia · Iniciativa', desc: 'Energía de inicio y creación. Impulso para abrir caminos nuevos, liderar con originalidad y confiar en uno mismo. Fuerza de voluntad pura.' },
+  2: { title: 'El Diplomático', keywords: 'Cooperación · Sensibilidad · Equilibrio', desc: 'Energía de conexión y armonía. Capacidad natural para mediar, escuchar y crear puentes entre personas. Intuición emocional refinada.' },
+  3: { title: 'El Creativo', keywords: 'Expresión · Alegría · Comunicación', desc: 'Energía de expresión artística y social. Talento para comunicar ideas, inspirar a otros y encontrar belleza en lo cotidiano.' },
+  4: { title: 'El Constructor', keywords: 'Estructura · Disciplina · Fundamentos', desc: 'Energía de orden y estabilidad. Capacidad para construir bases sólidas, organizar sistemas y trabajar con paciencia metódica.' },
+  5: { title: 'El Aventurero', keywords: 'Libertad · Cambio · Adaptabilidad', desc: 'Energía de movimiento y transformación. Curiosidad insaciable, versatilidad y necesidad de experiencias nuevas. Catalizador de cambio.' },
+  6: { title: 'El Protector', keywords: 'Responsabilidad · Amor · Servicio', desc: 'Energía de cuidado y nutrición. Vocación natural de proteger, sanar y crear espacios seguros para los demás. Corazón de hogar.' },
+  7: { title: 'El Buscador', keywords: 'Análisis · Espiritualidad · Profundidad', desc: 'Energía de introspección y búsqueda de verdad. Mente analítica con sed espiritual. Necesidad de entender los misterios de la vida.' },
+  8: { title: 'El Poderoso', keywords: 'Abundancia · Autoridad · Manifestación', desc: 'Energía de poder material y logro. Capacidad para manifestar visiones en realidad, manejar recursos y ejercer influencia con propósito.' },
+  9: { title: 'El Humanitario', keywords: 'Compasión · Sabiduría · Cierre', desc: 'Energía de culminación y servicio universal. Visión panorámica de la vida, generosidad innata y capacidad de soltar para avanzar.' },
+  11: { title: 'Maestro Intuitivo', keywords: 'Visión · Iluminación · Canal', desc: 'Número maestro. Intuición amplificada al máximo, capacidad casi psíquica de percibir lo invisible. Canal entre lo espiritual y lo terrenal. Doble energía del 1 fusionada con la sensibilidad del 2.' },
+  22: { title: 'Maestro Constructor', keywords: 'Visión práctica · Arquitecto · Legado', desc: 'Número maestro. El más poderoso en numerología. Capacidad de transformar sueños grandiosos en realidad tangible. Arquitecto de imperios con propósito espiritual. Doble 2 con la estabilidad del 4.' },
+  33: { title: 'Maestro Sanador', keywords: 'Amor incondicional · Guía · Elevación', desc: 'Número maestro. El más raro y elevado. Amor incondicional expresado como servicio supremo. Guía espiritual que eleva la consciencia colectiva. Doble 3 con el corazón del 6.' },
+};
+
 function reduceMaster(n) {
   while (n > 9) {
     if (n === 11 || n === 22 || n === 33) return n;
@@ -438,5 +453,5 @@ function calcKairosFlow(fechaNacimiento) {
   }));
 }
 
-export { ZODIAC_ANIMALS, ELEMENTS, LIFE_NUMBER_MEANINGS, WESTERN_SIGNS, AFFINITY_TRIANGLES, OPPOSITES, KAIROS_POSITIONS, calcKairosFlow };
+export { ZODIAC_ANIMALS, ELEMENTS, LIFE_NUMBER_MEANINGS, WESTERN_SIGNS, AFFINITY_TRIANGLES, OPPOSITES, KAIROS_POSITIONS, KAIROS_MEANINGS, calcKairosFlow };
 
