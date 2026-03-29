@@ -5,30 +5,33 @@ import { getPersonas, addPersona, updatePersona, deletePersona, subscribeToChang
 import { LangToggle, useLang } from '@/lib/i18n';
 
 const CATEGORIES = [
-  { value: 'familia', label: '👨‍👩‍👧 Familia', color: '#c62828', group: 'persona' },
-  { value: 'amigo', label: '💛 Amigo', color: '#f9a825', group: 'persona' },
-  { value: 'cliente', label: '💼 Cliente', color: '#1565c0', group: 'persona' },
-  { value: 'conocido', label: '👋 Conocido', color: '#2e7d32', group: 'persona' },
-  { value: 'marca', label: '🏷️ Marca', color: '#7b1fa2', group: 'marca' },
-  { value: 'equipo', label: '⚽ Equipo', color: '#388e3c', group: 'equipo' },
-  { value: 'pais', label: '🌎 País', color: '#00695c', group: 'pais' },
-  { value: 'estado', label: '🏛️ Estado', color: '#0277bd', group: 'pais' },
+  { value: 'familia', label: '👨‍👩‍👧 Familia', labelEn: '👨‍👩‍👧 Family', color: '#c62828', group: 'persona' },
+  { value: 'amigo', label: '💛 Amigo', labelEn: '💛 Friend', color: '#f9a825', group: 'persona' },
+  { value: 'cliente', label: '💼 Cliente', labelEn: '💼 Client', color: '#1565c0', group: 'persona' },
+  { value: 'conocido', label: '👋 Conocido', labelEn: '👋 Acquaintance', color: '#2e7d32', group: 'persona' },
+  { value: 'marca', label: '🏷️ Marca', labelEn: '🏷️ Brand', color: '#7b1fa2', group: 'marca' },
+  { value: 'equipo', label: '⚽ Equipo', labelEn: '⚽ Team', color: '#388e3c', group: 'equipo' },
+  { value: 'pais', label: '🌎 País', labelEn: '🌎 Country', color: '#00695c', group: 'pais' },
+  { value: 'estado', label: '🏛️ Estado', labelEn: '🏛️ State', color: '#0277bd', group: 'pais' },
 ];
 
 const GROUPS = [
-  { value: 'persona', label: '👤 Personas', color: '#c62828', cats: ['familia','amigo','cliente','conocido'] },
-  { value: 'marca', label: '🏷️ Marcas', color: '#7b1fa2', cats: ['marca'] },
-  { value: 'equipo', label: '⚽ Equipos', color: '#388e3c', cats: ['equipo'] },
-  { value: 'pais', label: '🌎 Países', color: '#00695c', cats: ['pais','estado'] },
+  { value: 'persona', label: '👤 Personas', labelEn: '👤 People', color: '#c62828', cats: ['familia','amigo','cliente','conocido'] },
+  { value: 'marca', label: '🏷️ Marcas', labelEn: '🏷️ Brands', color: '#7b1fa2', cats: ['marca'] },
+  { value: 'equipo', label: '⚽ Equipos', labelEn: '⚽ Teams', color: '#388e3c', cats: ['equipo'] },
+  { value: 'pais', label: '🌎 Países', labelEn: '🌎 Countries', color: '#00695c', cats: ['pais','estado'] },
 ];
 
+const getLabel = (item, lang) => lang === 'en' && item.labelEn ? item.labelEn : item.label;
+
 function PersonCard({ persona, onClick }) {
+  const { lang } = useLang();
   const zodiac = getChineseZodiac(persona.fecha_nacimiento);
   const lifeNum = calcLifeNumber(persona.fecha_nacimiento);
   const meaning = getLifeNumberMeaning(lifeNum);
   const cat = CATEGORIES.find(c => c.value === persona.categoria) || CATEGORIES[0];
   const birthDate = new Date(persona.fecha_nacimiento + 'T12:00:00');
-  const birthStr = birthDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
+  const birthStr = birthDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
 
   return (
     <button onClick={onClick} className="w-full text-left bg-white rounded-2xl p-4 card-glow hover:shadow-lg transition-all border border-[#f0e6d3] active:scale-[0.98]">
@@ -45,7 +48,7 @@ function PersonCard({ persona, onClick }) {
           {persona.nota && <p className="text-xs text-[#c4a882] mt-0.5 truncate italic">"{persona.nota}"</p>}
         </div>
         <span className="text-xs px-2 py-1 rounded-full shrink-0" style={{ background: cat.color + '18', color: cat.color }}>
-          {cat.label.split(' ')[0]}
+          {getLabel(cat, lang).split(' ')[0]}
         </span>
       </div>
     </button>
@@ -53,6 +56,7 @@ function PersonCard({ persona, onClick }) {
 }
 
 function AddPersonForm({ onSave, onCancel, initial }) {
+  const { t, lang } = useLang();
   const [nombre, setNombre] = useState(initial?.nombre || '');
   const [fecha, setFecha] = useState(initial?.fecha_nacimiento || '');
   const [hora, setHora] = useState(initial?.hora_nacimiento || '');
@@ -62,49 +66,49 @@ function AddPersonForm({ onSave, onCancel, initial }) {
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-[#faf5eb] w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-auto">
-        <h2 className="text-xl font-bold text-[#2d1f0e] mb-6">{initial ? 'Editar' : 'Agregar'} Persona</h2>
+        <h2 className="text-xl font-bold text-[#2d1f0e] mb-6">{initial ? t('editar_form') : t('agregar_form')}</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#8d6e63] mb-1">Nombre</label>
+            <label className="block text-sm font-medium text-[#8d6e63] mb-1">{t('nombre')}</label>
             <input type="text" value={nombre} onChange={e => setNombre(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]"
-              placeholder="Nombre completo" autoFocus />
+              placeholder={t('nombre_completo')} autoFocus />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#8d6e63] mb-1">Fecha de nacimiento</label>
+            <label className="block text-sm font-medium text-[#8d6e63] mb-1">{t('fecha_nacimiento')}</label>
             <input type="date" value={fecha} onChange={e => setFecha(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#8d6e63] mb-1">Hora de nacimiento <span className="text-[#c4a882] font-normal">(opcional — mejora Nakshatra)</span></label>
+            <label className="block text-sm font-medium text-[#8d6e63] mb-1">{t('hora_nacimiento')} <span className="text-[#c4a882] font-normal">{t('hora_opcional')}</span></label>
             <input type="time" value={hora} onChange={e => setHora(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#8d6e63] mb-1">Nota <span className="text-[#c4a882] font-normal">(opcional)</span></label>
+            <label className="block text-sm font-medium text-[#8d6e63] mb-1">{t('nota')} <span className="text-[#c4a882] font-normal">{t('opcional')}</span></label>
             <input type="text" value={nota} onChange={e => setNota(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]"
-              placeholder="Ej: vecina del 3B, compañera de yoga..." />
+              placeholder={t('nota_placeholder')} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#8d6e63] mb-1">Categoría</label>
+            <label className="block text-sm font-medium text-[#8d6e63] mb-1">{t('categoria')}</label>
             <div className="grid grid-cols-2 gap-2">
               {CATEGORIES.map(c => (
                 <button key={c.value} onClick={() => setCategoria(c.value)}
                   className={`px-3 py-2 rounded-xl text-sm font-medium transition-all ${categoria === c.value ? 'ring-2 ring-offset-1' : 'opacity-60'}`}
                   style={{ background: c.color + '18', color: c.color, ringColor: c.color }}>
-                  {c.label}
+                  {getLabel(c, lang)}
                 </button>
               ))}
             </div>
           </div>
         </div>
         <div className="flex gap-3 mt-6">
-          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63] font-medium">Cancelar</button>
+          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63] font-medium">{t('cancelar')}</button>
           <button onClick={() => { if (nombre && fecha) onSave({ nombre, fecha_nacimiento: fecha, hora_nacimiento: hora || null, categoria, nota: nota || null }); }}
             disabled={!nombre || !fecha}
             className="flex-1 py-3 rounded-xl gradient-mystic text-white font-medium disabled:opacity-40">
-            Guardar
+            {t('guardar')}
           </button>
         </div>
       </div>
@@ -113,22 +117,26 @@ function AddPersonForm({ onSave, onCancel, initial }) {
 }
 
 function CategoryChanger({ currentCat, onChangeCat, onCancel }) {
+  const { t, lang } = useLang();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-[#faf5eb] w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl p-6">
-        <h2 className="text-lg font-bold text-[#2d1f0e] mb-4">Cambiar categoría</h2>
+        <h2 className="text-lg font-bold text-[#2d1f0e] mb-4">{t('cambiar_categoria')}</h2>
         <div className="space-y-2">
-          {CATEGORIES.map(c => (
-            <button key={c.value} onClick={() => onChangeCat(c.value)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${c.value === currentCat ? 'ring-2 ring-offset-1 opacity-100' : 'opacity-70 hover:opacity-100'}`}
-              style={{ background: c.color + '15', color: c.color, ringColor: c.color }}>
-              <span className="text-lg">{c.label.split(' ')[0]}</span>
-              <span className="font-medium">{c.label.split(' ').slice(1).join(' ')}</span>
-              {c.value === currentCat && <span className="ml-auto text-sm">actual</span>}
-            </button>
-          ))}
+          {CATEGORIES.map(c => {
+            const lbl = getLabel(c, lang);
+            return (
+              <button key={c.value} onClick={() => onChangeCat(c.value)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${c.value === currentCat ? 'ring-2 ring-offset-1 opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                style={{ background: c.color + '15', color: c.color, ringColor: c.color }}>
+                <span className="text-lg">{lbl.split(' ')[0]}</span>
+                <span className="font-medium">{lbl.split(' ').slice(1).join(' ')}</span>
+                {c.value === currentCat && <span className="ml-auto text-sm">{lang === 'en' ? 'current' : 'actual'}</span>}
+              </button>
+            );
+          })}
         </div>
-        <button onClick={onCancel} className="w-full mt-4 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63]">Cancelar</button>
+        <button onClick={onCancel} className="w-full mt-4 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63]">{t('cancelar')}</button>
       </div>
     </div>
   );
@@ -720,17 +728,18 @@ function CompareSelector({ personas, current, onSelect, onCancel }) {
 }
 
 function NoteEditor({ currentNote, onSave, onCancel }) {
+  const { t } = useLang();
   const [nota, setNota] = useState(currentNote || '');
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-[#faf5eb] w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl p-6">
-        <h2 className="text-lg font-bold text-[#2d1f0e] mb-4">Nota</h2>
+        <h2 className="text-lg font-bold text-[#2d1f0e] mb-4">{t('nota')}</h2>
         <input type="text" value={nota} onChange={e => setNota(e.target.value)}
           className="w-full px-4 py-3 rounded-xl border border-[#f0e6d3] bg-white focus:outline-none focus:ring-2 focus:ring-[#d4a843] text-[#2d1f0e]"
-          placeholder="Ej: vecina del 3B, compañera de yoga..." autoFocus />
+          placeholder={t('nota_placeholder')} autoFocus />
         <div className="flex gap-3 mt-4">
-          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63]">Cancelar</button>
-          <button onClick={() => onSave(nota || null)} className="flex-1 py-3 rounded-xl gradient-mystic text-white font-medium">Guardar</button>
+          <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-[#f0e6d3] text-[#8d6e63]">{t('cancelar')}</button>
+          <button onClick={() => onSave(nota || null)} className="flex-1 py-3 rounded-xl gradient-mystic text-white font-medium">{t('guardar')}</button>
         </div>
       </div>
     </div>
@@ -1187,6 +1196,7 @@ function GroupCompareView({ personas, onBack }) {
 }
 
 export default function Home() {
+  const { t, lang } = useLang();
   const [personas, setPersonas] = useState([]);
   const [view, setView] = useState('list');
   const [showAdd, setShowAdd] = useState(false);
@@ -1381,8 +1391,8 @@ export default function Home() {
       <div className="gradient-mystic text-white p-6 pb-8 rounded-b-3xl">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold">Mi Círculo</h1>
-            <p className="text-white/60 text-sm mt-1">4 tradiciones · Zodiaco · Numerología</p>
+            <h1 className="text-2xl font-bold">{t('mi_circulo')}</h1>
+            <p className="text-white/60 text-sm mt-1">{t('4trad_subtitle')}</p>
           </div>
           <div className="flex items-center gap-2">
             <LangToggle />
@@ -1394,7 +1404,7 @@ export default function Home() {
           </div>
         </div>
         <div className="relative">
-          <input type="text" placeholder="Buscar persona..." value={search} onChange={e => setSearch(e.target.value)}
+          <input type="text" placeholder={t('buscar_persona')} value={search} onChange={e => setSearch(e.target.value)}
             className="w-full px-4 py-3 pl-10 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#d4a843]" />
           <span className="absolute left-3 top-3.5 text-white/40">🔍</span>
         </div>
@@ -1403,7 +1413,7 @@ export default function Home() {
       <div className="px-4 mt-4 flex gap-2 overflow-x-auto pb-2">
         <button onClick={() => { setFilterCat('all'); setFilterSubCat('all'); }}
           className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${filterCat === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
-          Todos ({personas.length})
+          {t('todos')} ({personas.length})
         </button>
         {GROUPS.map(g => {
           const count = personas.filter(p => g.cats.includes(p.categoria)).length;
@@ -1411,7 +1421,7 @@ export default function Home() {
             <button key={g.value} onClick={() => { setFilterCat(g.value); setFilterSubCat('all'); }}
               className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${filterCat === g.value ? 'text-white' : 'bg-white border border-[#f0e6d3]'}`}
               style={filterCat === g.value ? { background: g.color } : { color: g.color }}>
-              {g.label} ({count})
+              {getLabel(g, lang)} ({count})
             </button>
           );
         })}
@@ -1424,7 +1434,7 @@ export default function Home() {
           <div className="px-4 mt-1 flex gap-1.5 overflow-x-auto pb-1">
             <button onClick={() => setFilterSubCat('all')}
               className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${filterSubCat === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
-              Todos
+              {t('todos')}
             </button>
             {subCats.map(c => {
               const count = personas.filter(p => p.categoria === c.value).length;
@@ -1432,7 +1442,7 @@ export default function Home() {
                 <button key={c.value} onClick={() => setFilterSubCat(c.value)}
                   className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${filterSubCat === c.value ? 'text-white' : 'bg-white border border-[#f0e6d3]'}`}
                   style={filterSubCat === c.value ? { background: c.color } : { color: c.color }}>
-                  {c.label} ({count})
+                  {getLabel(c, lang)} ({count})
                 </button>
               );
             })}
@@ -1444,22 +1454,22 @@ export default function Home() {
       <div className="px-4 mt-2 flex gap-2 flex-wrap">
         <button onClick={() => { setShowZodiacFilter(!showZodiacFilter); setShowNumberFilter(false); }}
           className={`px-4 py-1.5 rounded-full text-sm transition-all ${filterZodiac !== 'all' ? 'bg-[#d4a843] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
-          {filterZodiac !== 'all' ? `${ZODIAC_ANIMALS.find(a => a.name === filterZodiac)?.emoji} ${filterZodiac}` : '🐲 Filtrar por signo'} {showZodiacFilter ? '▲' : '▼'}
+          {filterZodiac !== 'all' ? `${ZODIAC_ANIMALS.find(a => a.name === filterZodiac)?.emoji} ${filterZodiac}` : t('filtrar_signo')} {showZodiacFilter ? '▲' : '▼'}
         </button>
         <button onClick={() => { setShowNumberFilter(!showNumberFilter); setShowZodiacFilter(false); }}
           className={`px-4 py-1.5 rounded-full text-sm transition-all ${filterNumber !== 'all' ? 'bg-[#7b1fa2] text-white' : 'bg-white text-[#8d6e63] border border-[#f0e6d3]'}`}>
-          {filterNumber !== 'all' ? `#${filterNumber}` : '🔢 Filtrar por número'} {showNumberFilter ? '▲' : '▼'}
+          {filterNumber !== 'all' ? `#${filterNumber}` : t('filtrar_numero')} {showNumberFilter ? '▲' : '▼'}
         </button>
         {personas.length >= 2 && (
           <button onClick={() => setView('affinity')}
             className="px-4 py-1.5 rounded-full text-sm bg-white text-[#8d6e63] border border-[#f0e6d3] hover:border-[#d4a843] transition-all">
-            🤝 Aliados y Opuestos
+            {t('aliados_opp_btn')}
           </button>
         )}
         {personas.length >= 3 && (
           <button onClick={() => setView('groupCompare')}
             className="px-4 py-1.5 rounded-full text-sm bg-white text-[#8d6e63] border border-[#f0e6d3] hover:border-[#d4a843] transition-all">
-            👥 Grupo
+            {t('grupo_btn')}
           </button>
         )}
       </div>
@@ -1467,7 +1477,7 @@ export default function Home() {
         <div className="px-4 mt-2 grid grid-cols-4 gap-1.5">
           <button onClick={() => { setFilterZodiac('all'); setShowZodiacFilter(false); }}
             className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterZodiac === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white border border-[#f0e6d3] text-[#8d6e63]'}`}>
-            Todos
+            {t('todos')}
           </button>
           {ZODIAC_ANIMALS.map(a => {
             const count = personas.filter(p => getChineseZodiac(p.fecha_nacimiento).name === a.name).length;
@@ -1484,7 +1494,7 @@ export default function Home() {
         <div className="px-4 mt-2 grid grid-cols-5 gap-1.5">
           <button onClick={() => { setFilterNumber('all'); setShowNumberFilter(false); }}
             className={`px-2 py-2 rounded-xl text-xs text-center transition-all ${filterNumber === 'all' ? 'bg-[#2d1f0e] text-white' : 'bg-white border border-[#f0e6d3] text-[#8d6e63]'}`}>
-            Todos
+            {t('todos')}
           </button>
           {[1,2,3,4,5,6,7,8,9,11,22,33].map(n => {
             const count = personas.filter(p => calcLifeNumber(p.fecha_nacimiento) === n).length;
@@ -1500,18 +1510,18 @@ export default function Home() {
 
       <div className="px-4 mt-4 space-y-3">
         {loading ? (
-          <div className="text-center py-16 text-[#8d6e63]">Cargando...</div>
+          <div className="text-center py-16 text-[#8d6e63]">{t('cargando')}</div>
         ) : filterCat === null && !search ? (
           <div className="text-center py-16">
             <div className="text-5xl mb-4">🔮</div>
-            <p className="text-[#8d6e63] font-medium">Mi Círculo</p>
-            <p className="text-sm text-[#c4a882] mt-2">Selecciona un grupo o busca por nombre</p>
-            <p className="text-xs text-[#c4a882] mt-1">{personas.length} registros</p>
+            <p className="text-[#8d6e63] font-medium">{t('mi_circulo')}</p>
+            <p className="text-sm text-[#c4a882] mt-2">{t('selecciona_grupo')}</p>
+            <p className="text-xs text-[#c4a882] mt-1">{personas.length} {t('registros')}</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-5xl mb-4">🔮</div>
-            <p className="text-[#8d6e63]">{personas.length === 0 ? 'Agrega tu primera persona' : 'Sin resultados'}</p>
+            <p className="text-[#8d6e63]">{personas.length === 0 ? t('agrega_primera') : t('sin_resultados')}</p>
           </div>
         ) : (
           filtered.map(p => (
@@ -1526,7 +1536,7 @@ export default function Home() {
       </button>
 
       <div className="fixed bottom-0 left-0 right-0 text-center py-2 text-xs text-[#c4a882] bg-[#faf5eb]/80 backdrop-blur">
-        Hecho por duendes.app 2026
+        {t('footer')}
       </div>
 
       {showAdd && <AddPersonForm onSave={handleAdd} onCancel={() => setShowAdd(false)} />}
